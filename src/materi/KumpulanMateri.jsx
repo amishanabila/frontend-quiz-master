@@ -64,14 +64,13 @@ export default function KumpulanMateri() {
 
         let response;
         if (kategoriAktif === "Semua") {
-          // Load SEMUA materi (dengan atau tanpa filter created_by)
-          // Kemudian filter di frontend untuk handle soal lama
-          response = await apiService.getMateri(null, currentUser.id);
+          // LOAD SEMUA MATERI (tanpa filter di backend)
+          response = await apiService.getMateri(null, null);
         } else {
           const kategori = allKategori.find(k => k.nama_kategori === kategoriAktif);
           if (kategori) {
-            // Load materi dari kategori (dengan atau tanpa filter created_by)
-            response = await apiService.getMateri(kategori.id, currentUser.id);
+            // LOAD MATERI DARI KATEGORI (tanpa filter created_by di backend)
+            response = await apiService.getMateri(kategori.id, null);
           } else {
             response = { status: "success", data: [] };
           }
