@@ -113,6 +113,7 @@ export default function KumpulanMateri() {
           });
 
           console.log("✅ Setting list with", sortedMateri.length, "items");
+          console.log("📋 First item:", sortedMateri[0]);
           setMateriList(sortedMateri);
         } else {
           console.error("❌ Invalid response:", response);
@@ -126,8 +127,17 @@ export default function KumpulanMateri() {
       }
     };
 
-    if (currentUser && (allKategori.length > 0 || kategoriAktif === "Semua")) {
+    // Trigger load when currentUser is available
+    if (currentUser) {
+      console.log("🎯 Triggering loadMateri with:", {
+        currentUser: currentUser.id,
+        kategoriAktif,
+        allKategoriLength: allKategori.length
+      });
       loadMateri();
+    } else {
+      console.log("⚠️ No currentUser, setting loading false");
+      setLoading(false);
     }
   }, [kategoriAktif, allKategori, currentUser]);
 
@@ -284,6 +294,9 @@ export default function KumpulanMateri() {
         </h2>
       </div>
       
+      {/* Debug: Show current state */}
+      {console.log("🎨 RENDER - materiList length:", materiList.length, "loading:", loading)}
+      
       {loading ? (
         <div className="flex justify-center p-8">
           <div className="text-gray-500">Loading materi...</div>
@@ -343,13 +356,11 @@ export default function KumpulanMateri() {
                   <h3 className="font-bold text-lg mb-1 pr-20">{m.materi}</h3>
                   <p className="text-gray-500 text-sm">{m.kategori}</p>
                 </div>
-                {m.jumlahSoal > 0 && (
-                  <div className="mt-3 pt-3 border-t border-gray-200">
-                    <p className="text-xs text-gray-600">
-                      📝 {m.jumlahSoal} soal
-                    </p>
-                  </div>
-                )}
+                <div className="mt-3 pt-3 border-t border-gray-200">
+                  <p className="text-xs text-gray-600">
+                    📝 {m.jumlahSoal} soal
+                  </p>
+                </div>
               </div>
             );
           })
