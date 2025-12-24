@@ -62,61 +62,42 @@ export default function KumpulanMateri() {
           return;
         }
 
+        // 🔥 PERBAIKAN: Load kumpulan_soal (actual questions) dari endpoint baru
         let response;
         if (kategoriAktif === "Semua") {
-          // LOAD SEMUA MATERI (tanpa filter di backend)
-          response = await apiService.getMateri(null, null);
+          // LOAD SEMUA KUMPULAN SOAL milik kreator
+          response = await apiService.getMyKumpulanSoal(null);
         } else {
           const kategori = allKategori.find(k => k.nama_kategori === kategoriAktif);
           if (kategori) {
-            // LOAD MATERI DARI KATEGORI (tanpa filter created_by di backend)
-            response = await apiService.getMateri(kategori.id, null);
+            // LOAD KUMPULAN SOAL DARI KATEGORI YANG DIPILIH
+            response = await apiService.getMyKumpulanSoal(kategori.id);
           } else {
             response = { status: "success", data: [] };
           }
         }
 
         if (response.status === "success" && response.data) {
-          console.log("📊 Raw materi data from API:", response.data);
+          console.log("📊 Kumpulan soal dari API:", response.data);
           
-          const materiFromAPI = await Promise.all(response.data.map(async (m) => {
-            let kumpulanSoalId = null;
-            let jumlahSoal = 0;
-            try {
-              const soalResponse = await apiService.getSoalByMateri(m.materi_id);
-              if (soalResponse.status === "success" && soalResponse.data) {
-                kumpulanSoalId = soalResponse.data.kumpulan_soal_id;
-                jumlahSoal = soalResponse.data.soal_list?.length || 0;
-              }
-            } catch (err) {
-              console.error(`❌ Error fetching soal:`, err);
-            }
-
+          // Transform kumpulan_soal data ke format yang sesuai dengan komponen
+          const materiFromAPI = response.data.map((ks) => {
             return {
-              materi_id: m.materi_id,
-              kumpulan_soal_id: kumpulanSoalId,
-              materi: m.judul,
-              kategori_id: m.kategori_id,
-              kategori: allKategori.find(k => k.id === m.kategori_id)?.nama_kategori || "Unknown",
-              jumlahSoal: jumlahSoal,
-              createdAt: m.created_at,
-              user_id: m.created_by 
+              materi_id: ks.kumpulan_soal_id,
+              kumpulan_soal_id: ks.kumpulan_soal_id,
+              materi: ks.judul,
+              kategori_id: ks.kategori_id,
+              kategori: ks.nama_kategori || "Unknown",
+              jumlahSoal: ks.jumlah_soal || 0,
+              createdAt: ks.created_at,
+              user_id: ks.created_by,
+              pin_code: ks.pin_code
             };
-          }));
-          
-          // Filter untuk hanya tampil soal dari kreator login
-          // Fallback: jika created_by NULL, check apakah owner bisa ditentukan dari context lain
-          const filteredMateri = materiFromAPI.filter(m => {
-            const creatorId = m.user_id;
-            // Tampilkan soal jika:
-            // 1. created_by match dengan currentUser.id
-            // 2. atau created_by NULL/undefined (soal lama - assume milik user yang upload)
-            return !creatorId || String(creatorId) === String(currentUser.id);
           });
           
-          console.log("🔍 Filtered materi count:", filteredMateri.length, "from total:", materiFromAPI.length);
+          console.log("🔍 Filtered materi count:", materiFromAPI.length, "from total:", response.data.length);
           
-          const sortedMateri = filteredMateri.sort((a, b) => {
+          const sortedMateri = materiFromAPI.sort((a, b) => {
             const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
             const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
             return dateB - dateA;

@@ -118,6 +118,24 @@ export const apiService = {
     return await response.json();
   },
 
+  // Get kumpulan soal created by current user (for dashboard)
+  async getMyKumpulanSoal(kategoriId = null) {
+    const token = localStorage.getItem('token');
+    let url = `${BASE_URL}/soal/my-kumpulan/all`;
+    
+    if (kategoriId) {
+      url += '?kategori_id=' + kategoriId;
+    }
+    
+    console.log("🔗 API Call: GET", url);
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return await response.json();
+  },
+
   async getMateriById(id) {
     const response = await fetch(`${BASE_URL}/materi/${id}`);
     return await response.json();
