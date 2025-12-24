@@ -1,5 +1,19 @@
 // Constants
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Ambil URL dari .env, atau gunakan link Railway sebagai cadangan
+let rawUrl = import.meta.env.VITE_API_URL || 'https://backend-quiz-master-production.up.railway.app';
+
+// --- LOGIKA PERBAIKAN URL OTOMATIS ---
+// 1. Hapus tanda garis miring (slash) di belakang jika ada
+if (rawUrl.endsWith('/')) {
+  rawUrl = rawUrl.slice(0, -1);
+}
+
+// 2. Cek apakah sudah ada '/api' di belakangnya? Jika belum, tambahkan otomatis.
+// Ini menjamin request selalu ke .../api/auth/login, bukan .../auth/login
+const BASE_URL = rawUrl.endsWith('/api') ? rawUrl : `${rawUrl}/api`;
+
+console.log('🔗 AuthService - BASE_URL yang digunakan:', BASE_URL);
+
 const AUTH_TOKEN_KEY = 'authToken';
 const USER_DATA_KEY = 'userData';
 

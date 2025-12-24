@@ -1,4 +1,17 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// --- LOGIKA SMART URL (Sama seperti authService) ---
+// Ambil URL dari .env, atau gunakan link Railway sebagai cadangan
+let rawUrl = import.meta.env.VITE_API_URL || 'https://backend-quiz-master-production.up.railway.app';
+
+// 1. Hapus tanda garis miring (slash) di belakang jika ada
+if (rawUrl.endsWith('/')) {
+  rawUrl = rawUrl.slice(0, -1);
+}
+
+// 2. Cek apakah sudah ada '/api' di belakangnya? Jika belum, tambahkan otomatis.
+// Ini MENJAMIN semua request ke backend akan selalu punya format .../api/...
+const BASE_URL = rawUrl.endsWith('/api') ? rawUrl : `${rawUrl}/api`;
+
+console.log('🔗 ApiService - BASE_URL yang digunakan:', BASE_URL);
 
 export const apiService = {
   // Auth API calls
@@ -231,7 +244,7 @@ export const apiService = {
       console.error('❌ validatePin error:', error);
       return {
         status: 'error',
-        message: 'Tidak dapat terhubung ke server. Pastikan backend sudah running di port 5000.',
+        message: 'Tidak dapat terhubung ke server.',
         error: error.message
       };
     }
