@@ -1,4 +1,4 @@
-// Update deploy ke Vercel fix banget
+// Update deploy ke Vercel fix 
 // --- LOGIKA SMART URL (Sama seperti authService) ---
 // Ambil URL dari .env, atau gunakan link Railway sebagai cadangan
 let rawUrl = import.meta.env.VITE_API_URL || 'https://backend-quiz-master-production.up.railway.app';
