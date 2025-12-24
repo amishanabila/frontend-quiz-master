@@ -41,20 +41,32 @@ export default function KumpulanMateri() {
   const toSlug = (text) =>
     text.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
 
-  // Load kategori from API
+  // Load kategori from API - HANYA kategori yang punya kumpulan soal dari kreator
   useEffect(() => {
     const loadKategori = async () => {
       try {
-        const response = await apiService.getKategori();
+        if (!currentUser) {
+          console.log("⚠️ No currentUser, skipping kategori load");
+          return;
+        }
+        
+        console.log("📊 Loading kategori for creator:", currentUser.id);
+        const response = await apiService.getKategoriWithStats(currentUser.id);
         if (response.status === "success" && response.data) {
-          setAllKategori(response.data);
+          console.log("✅ Loaded kategori:", response.data.length, "categories");
+          setAllKategori(response.data.map(k => ({
+            id: k.kategori_id,
+            nama_kategori: k.nama_kategori
+          })));
         }
       } catch (error) {
         console.error("❌ Error loading kategori:", error);
       }
     };
-    loadKategori();
-  }, []);
+    if (currentUser) {
+      loadKategori();
+    }
+  }, [currentUser]);
 
   // Load materi from API - HANYA DARI KREATOR YANG LOGIN
   useEffect(() => {
