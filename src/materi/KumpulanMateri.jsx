@@ -65,45 +65,73 @@ export default function KumpulanMateri() {
 
         console.log("📊 LoadMateri triggered - currentUser:", currentUser.id);
 
-        // 🔥 PERBAIKAN: Load kumpulan_soal (actual questions) dari endpoint baru
-        let response;
-        if (kategoriAktif === "Semua") {
-          // LOAD SEMUA KUMPULAN SOAL milik kreator
-          console.log("📊 Fetching all kumpulan soal (no kategori filter)");
-          response = await apiService.getMyKumpulanSoal(null);
-        } else {
-          const kategori = allKategori.find(k => k.nama_kategori === kategoriAktif);
-          if (kategori) {
-            // LOAD KUMPULAN SOAL DARI KATEGORI YANG DIPILIH
-            console.log("📊 Fetching kumpulan soal for kategori:", kategori.id);
-            response = await apiService.getMyKumpulanSoal(kategori.id);
+        // 🔥 TRY: Load from new endpoint /soal/my-kumpulan/all
+        let response = null;
+        let useNewEndpoint = true;
+
+        try {
+          if (kategoriAktif === "Semua") {
+            console.log("📊 Fetching all kumpulan soal (no kategori filter)");
+            response = await apiService.getMyKumpulanSoal(null);
           } else {
-            console.warn("⚠️ Kategori tidak ditemukan:", kategoriAktif);
-            response = { status: "success", data: [] };
+            const kategori = allKategori.find(k => k.nama_kategori === kategoriAktif);
+            if (kategori) {
+              console.log("📊 Fetching kumpulan soal for kategori:", kategori.id);
+              response = await apiService.getMyKumpulanSoal(kategori.id);
+            } else {
+              console.warn("⚠️ Kategori tidak ditemukan:", kategoriAktif);
+              response = { status: "success", data: [] };
+            }
+          }
+
+          console.log("📊 API Response from new endpoint:", response);
+
+          // JIKA new endpoint gagal atau empty, fallback ke old endpoint
+          if (!response || response.status !== "success" || !response.data) {
+            throw new Error("New endpoint failed, falling back to old endpoint");
+          }
+        } catch (newEndpointError) {
+          console.warn("⚠️ New endpoint error, trying fallback:", newEndpointError.message);
+          
+          // FALLBACK: Use old materi endpoint jika new endpoint gagal
+          useNewEndpoint = false;
+          try {
+            if (kategoriAktif === "Semua") {
+              response = await apiService.getMateri(null, null);
+            } else {
+              const kategori = allKategori.find(k => k.nama_kategori === kategoriAktif);
+              response = await apiService.getMateri(kategori?.id || null, null);
+            }
+            console.log("📊 Fallback response from old endpoint:", response);
+          } catch (fallbackError) {
+            console.error("❌ BOTH endpoints failed:", fallbackError);
+            setMateriList([]);
+            setLoading(false);
+            return;
           }
         }
 
-        console.log("📊 API Response:", response);
-
-        if (response.status === "success" && response.data) {
-          console.log("📊 Kumpulan soal dari API - count:", response.data.length);
+        if (response?.status === "success" && response?.data) {
+          console.log("📊 Data received - count:", response.data.length, "from endpoint:", useNewEndpoint ? "NEW" : "OLD");
           
-          // Transform kumpulan_soal data ke format yang sesuai dengan komponen
-          const materiFromAPI = response.data.map((ks) => {
+          // Transform data ke format komponen
+          const materiFromAPI = response.data.map((item) => {
+            // Support both new dan old endpoint format
+            const itemData = useNewEndpoint ? item : item;
             return {
-              materi_id: ks.kumpulan_soal_id,
-              kumpulan_soal_id: ks.kumpulan_soal_id,
-              materi: ks.judul,
-              kategori_id: ks.kategori_id,
-              kategori: ks.nama_kategori || "Unknown",
-              jumlahSoal: ks.jumlah_soal || 0,
-              createdAt: ks.created_at,
-              user_id: ks.created_by,
-              pin_code: ks.pin_code
+              materi_id: itemData.kumpulan_soal_id || itemData.materi_id,
+              kumpulan_soal_id: itemData.kumpulan_soal_id,
+              materi: itemData.judul || itemData.materi,
+              kategori_id: itemData.kategori_id,
+              kategori: itemData.nama_kategori || itemData.kategori || "Unknown",
+              jumlahSoal: itemData.jumlah_soal || 0,
+              createdAt: itemData.created_at,
+              user_id: itemData.created_by || itemData.user_id,
+              pin_code: itemData.pin_code
             };
           });
           
-          console.log("🔍 Mapped materi count:", materiFromAPI.length);
+          console.log("🔍 Mapped count:", materiFromAPI.length);
           
           const sortedMateri = materiFromAPI.sort((a, b) => {
             const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
@@ -111,10 +139,10 @@ export default function KumpulanMateri() {
             return dateB - dateA;
           });
 
-          console.log("✅ Setting materi list with", sortedMateri.length, "items");
+          console.log("✅ Setting list with", sortedMateri.length, "items");
           setMateriList(sortedMateri);
         } else {
-          console.error("❌ API returned error or no data:", response);
+          console.error("❌ Invalid response:", response);
           setMateriList([]);
         }
       } catch (error) {

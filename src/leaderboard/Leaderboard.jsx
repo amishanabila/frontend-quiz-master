@@ -83,8 +83,9 @@ export default function Leaderboard() {
       setLoading(true);
       setError(null);
       
+      console.log('📊 fetchLeaderboardData triggered');
+      
       // Build filters - created_by adalah OPTIONAL
-      // Jika ada currentUser, filter by created_by untuk keamanan
       const filters = {};
       if (currentUser) {
         filters.created_by = currentUser.id;
@@ -95,21 +96,37 @@ export default function Leaderboard() {
       
       console.log('📊 Fetching leaderboard with filters:', filters);
       
-      const response = await apiService.getLeaderboard(filters);
+      // Add timeout to prevent infinite loading
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
       
-      if (response.status === 'success') {
-        console.log('✅ Leaderboard data loaded:', response.data.length, 'entries');
-        setLeaderboardData(response.data);
+      try {
+        const response = await apiService.getLeaderboard(filters);
+        clearTimeout(timeoutId);
         
-        if (response.data.length === 0) {
-          console.log('⚠️ Leaderboard kosong - user mungkin belum punya peserta atau soal');
+        console.log('📊 Leaderboard response:', response);
+        
+        if (response?.status === 'success' && response?.data) {
+          console.log('✅ Leaderboard data loaded:', response.data.length, 'entries');
+          setLeaderboardData(response.data);
+          
+          if (response.data.length === 0) {
+            console.log('⚠️ Leaderboard kosong');
+          }
+        } else {
+          console.error('❌ Invalid response:', response);
+          setLeaderboardData([]);
         }
-      } else {
-        setError(response.message || 'Gagal memuat data leaderboard');
+      } catch (fetchErr) {
+        clearTimeout(timeoutId);
+        console.error('❌ Fetch error:', fetchErr);
+        setError('Terjadi kesalahan saat memuat data leaderboard: ' + fetchErr.message);
+        setLeaderboardData([]);
       }
     } catch (err) {
-      console.error('Error fetching leaderboard:', err);
+      console.error('❌ Error in fetchLeaderboardData:', err);
       setError('Terjadi kesalahan saat memuat data leaderboard');
+      setLeaderboardData([]);
     } finally {
       setLoading(false);
     }

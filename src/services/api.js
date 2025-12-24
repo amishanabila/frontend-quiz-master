@@ -128,29 +128,37 @@ export const apiService = {
     }
     
     console.log("🔗 API Call: GET", url);
-    console.log("🔗 Auth Header Present:", !!token);
     
     try {
       const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        signal: AbortSignal.timeout(10000) // 10 second timeout
       });
       
       console.log('🔗 Response Status:', response.status);
-      const data = await response.json();
       
-      if (response.status !== 200) {
-        console.error('❌ API Error:', data);
-      } else {
-        console.log('✅ API Success, data count:', data.data?.length || 0);
+      if (!response.ok) {
+        console.error('❌ API returned', response.status);
+        return {
+          status: 'error',
+          message: 'API Error: ' + response.status,
+          data: []
+        };
       }
       
+      const data = await response.json();
+      console.log('✅ MyKumpulanSoal response:', data);
       return data;
     } catch (error) {
-      console.error('❌ API Call Error:', error);
-      throw error;
+      console.error('❌ MyKumpulanSoal API error:', error);
+      return {
+        status: 'error',
+        message: error.message,
+        data: []
+      };
     }
   },
 
@@ -348,8 +356,25 @@ export const apiService = {
     if (filters.created_by) params.append('created_by', filters.created_by);
     
     const url = `${BASE_URL}/leaderboard${params.toString() ? '?' + params.toString() : ''}`;
-    const response = await fetch(url);
-    return await response.json();
+    console.log("🔗 API Call: GET", url);
+    
+    try {
+      const response = await fetch(url, {
+        signal: AbortSignal.timeout(10000) // 10 second timeout
+      });
+      
+      console.log('🔗 Response Status:', response.status);
+      const data = await response.json();
+      console.log('✅ Leaderboard API response:', data);
+      return data;
+    } catch (error) {
+      console.error('❌ Leaderboard API error:', error);
+      return {
+        status: 'error',
+        message: error.message,
+        data: []
+      };
+    }
   },
 
   async getKategoriWithStats() {
