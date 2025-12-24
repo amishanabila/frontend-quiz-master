@@ -29,8 +29,15 @@ export default function LihatSoal() {
         console.log("📖 State data:", stateData);
         setMateriName(stateData.materi);
 
-        // Fetch soal by materi_id from API
-        const response = await apiService.getSoalByMateri(stateData.materi_id);
+        // 🔥 FIX: Use kumpulan_soal_id if available (from new endpoint), else use materi_id
+        let response;
+        if (stateData.kumpulan_soal_id) {
+          console.log("📖 Using kumpulan_soal_id:", stateData.kumpulan_soal_id);
+          response = await apiService.getSoalByKumpulanSoal(stateData.kumpulan_soal_id);
+        } else {
+          console.log("📖 Using materi_id:", stateData.materi_id);
+          response = await apiService.getSoalByMateri(stateData.materi_id);
+        }
         
         if (response.status === "success" && response.data && response.data.soal_list) {
           const soalFromAPI = response.data.soal_list;
