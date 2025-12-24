@@ -22,13 +22,18 @@ export default function KumpulanMateri() {
 
   // Load User Data saat pertama kali render (ambil dari localStorage)
   useEffect(() => {
-    const userString = localStorage.getItem("user");
+    const userString = localStorage.getItem("userData"); // ✅ FIX: Use correct localStorage key
+    console.log("🔍 localStorage userData:", userString);
     if (userString) {
       try {
-        setCurrentUser(JSON.parse(userString));
+        const user = JSON.parse(userString);
+        console.log("✅ Parsed user:", user);
+        setCurrentUser(user);
       } catch (e) {
-        console.error("Error parsing user data:", e);
+        console.error("❌ Error parsing user data:", e);
       }
+    } else {
+      console.warn("⚠️ No userData found in localStorage");
     }
   }, []);
 
