@@ -65,69 +65,42 @@ export default function KumpulanMateri() {
 
         console.log("📊 LoadMateri triggered - currentUser:", currentUser.id);
 
-        // 🔥 TRY: Load from new endpoint /soal/my-kumpulan/all
+        // 🔥 Load from /soal/my-kumpulan/all endpoint
         let response = null;
-        let useNewEndpoint = true;
 
-        try {
-          if (kategoriAktif === "Semua") {
-            console.log("📊 Fetching all kumpulan soal (no kategori filter)");
-            response = await apiService.getMyKumpulanSoal(null);
+        if (kategoriAktif === "Semua") {
+          console.log("📊 Fetching all kumpulan soal (no kategori filter)");
+          response = await apiService.getMyKumpulanSoal(null);
+        } else {
+          const kategori = allKategori.find(k => k.nama_kategori === kategoriAktif);
+          if (kategori) {
+            console.log("📊 Fetching kumpulan soal for kategori:", kategori.id);
+            response = await apiService.getMyKumpulanSoal(kategori.id);
           } else {
-            const kategori = allKategori.find(k => k.nama_kategori === kategoriAktif);
-            if (kategori) {
-              console.log("📊 Fetching kumpulan soal for kategori:", kategori.id);
-              response = await apiService.getMyKumpulanSoal(kategori.id);
-            } else {
-              console.warn("⚠️ Kategori tidak ditemukan:", kategoriAktif);
-              response = { status: "success", data: [] };
-            }
-          }
-
-          console.log("📊 API Response from new endpoint:", response);
-
-          // JIKA new endpoint gagal atau empty, fallback ke old endpoint
-          if (!response || response.status !== "success" || !response.data) {
-            throw new Error("New endpoint failed, falling back to old endpoint");
-          }
-        } catch (newEndpointError) {
-          console.warn("⚠️ New endpoint error, trying fallback:", newEndpointError.message);
-          
-          // FALLBACK: Use old materi endpoint jika new endpoint gagal
-          useNewEndpoint = false;
-          try {
-            if (kategoriAktif === "Semua") {
-              response = await apiService.getMateri(null, null);
-            } else {
-              const kategori = allKategori.find(k => k.nama_kategori === kategoriAktif);
-              response = await apiService.getMateri(kategori?.id || null, null);
-            }
-            console.log("📊 Fallback response from old endpoint:", response);
-          } catch (fallbackError) {
-            console.error("❌ BOTH endpoints failed:", fallbackError);
+            console.warn("⚠️ Kategori tidak ditemukan:", kategoriAktif);
             setMateriList([]);
             setLoading(false);
             return;
           }
         }
 
-        if (response?.status === "success" && response?.data) {
-          console.log("📊 Data received - count:", response.data.length, "from endpoint:", useNewEndpoint ? "NEW" : "OLD");
+        console.log("📊 API Response:", response);
+
+        if (response?.status === "success" && Array.isArray(response?.data)) {
+          console.log("📊 Data received - count:", response.data.length);
           
           // Transform data ke format komponen
           const materiFromAPI = response.data.map((item) => {
-            // Support both new dan old endpoint format
-            const itemData = useNewEndpoint ? item : item;
             return {
-              materi_id: itemData.kumpulan_soal_id || itemData.materi_id,
-              kumpulan_soal_id: itemData.kumpulan_soal_id,
-              materi: itemData.judul || itemData.materi,
-              kategori_id: itemData.kategori_id,
-              kategori: itemData.nama_kategori || itemData.kategori || "Unknown",
-              jumlahSoal: itemData.jumlah_soal || 0,
-              createdAt: itemData.created_at,
-              user_id: itemData.created_by || itemData.user_id,
-              pin_code: itemData.pin_code
+              materi_id: item.kumpulan_soal_id,
+              kumpulan_soal_id: item.kumpulan_soal_id,
+              materi: item.judul,
+              kategori_id: item.kategori_id,
+              kategori: item.nama_kategori || "Unknown",
+              jumlahSoal: item.jumlah_soal || 0,
+              createdAt: item.created_at,
+              user_id: item.created_by,
+              pin_code: item.pin_code
             };
           });
           
