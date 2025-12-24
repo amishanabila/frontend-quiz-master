@@ -57,28 +57,36 @@ export default function KumpulanMateri() {
       setLoading(true);
       try {
         if (!currentUser) {
+          console.log("⚠️ No currentUser, skipping load");
           setMateriList([]);
           setLoading(false);
           return;
         }
 
+        console.log("📊 LoadMateri triggered - currentUser:", currentUser.id);
+
         // 🔥 PERBAIKAN: Load kumpulan_soal (actual questions) dari endpoint baru
         let response;
         if (kategoriAktif === "Semua") {
           // LOAD SEMUA KUMPULAN SOAL milik kreator
+          console.log("📊 Fetching all kumpulan soal (no kategori filter)");
           response = await apiService.getMyKumpulanSoal(null);
         } else {
           const kategori = allKategori.find(k => k.nama_kategori === kategoriAktif);
           if (kategori) {
             // LOAD KUMPULAN SOAL DARI KATEGORI YANG DIPILIH
+            console.log("📊 Fetching kumpulan soal for kategori:", kategori.id);
             response = await apiService.getMyKumpulanSoal(kategori.id);
           } else {
+            console.warn("⚠️ Kategori tidak ditemukan:", kategoriAktif);
             response = { status: "success", data: [] };
           }
         }
 
+        console.log("📊 API Response:", response);
+
         if (response.status === "success" && response.data) {
-          console.log("📊 Kumpulan soal dari API:", response.data);
+          console.log("📊 Kumpulan soal dari API - count:", response.data.length);
           
           // Transform kumpulan_soal data ke format yang sesuai dengan komponen
           const materiFromAPI = response.data.map((ks) => {
@@ -95,7 +103,7 @@ export default function KumpulanMateri() {
             };
           });
           
-          console.log("🔍 Filtered materi count:", materiFromAPI.length, "from total:", response.data.length);
+          console.log("🔍 Mapped materi count:", materiFromAPI.length);
           
           const sortedMateri = materiFromAPI.sort((a, b) => {
             const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
@@ -103,7 +111,11 @@ export default function KumpulanMateri() {
             return dateB - dateA;
           });
 
+          console.log("✅ Setting materi list with", sortedMateri.length, "items");
           setMateriList(sortedMateri);
+        } else {
+          console.error("❌ API returned error or no data:", response);
+          setMateriList([]);
         }
       } catch (error) {
         console.error("❌ Error loading materi:", error);

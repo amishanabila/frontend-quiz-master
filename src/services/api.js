@@ -128,12 +128,30 @@ export const apiService = {
     }
     
     console.log("🔗 API Call: GET", url);
-    const response = await fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+    console.log("🔗 Auth Header Present:", !!token);
+    
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('🔗 Response Status:', response.status);
+      const data = await response.json();
+      
+      if (response.status !== 200) {
+        console.error('❌ API Error:', data);
+      } else {
+        console.log('✅ API Success, data count:', data.data?.length || 0);
       }
-    });
-    return await response.json();
+      
+      return data;
+    } catch (error) {
+      console.error('❌ API Call Error:', error);
+      throw error;
+    }
   },
 
   async getMateriById(id) {
