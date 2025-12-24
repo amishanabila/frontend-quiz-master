@@ -54,14 +54,15 @@ export default function BuatSoal() {
     console.log('✅ User is kreator, access granted');
   }, [navigate]);
 
-  // Load kategori from API
+  // Load kategori from API (ALL CATEGORIES - public untuk semua kreator)
   React.useEffect(() => {
     const loadKategori = async () => {
       try {
         const response = await apiService.getKategori();
         if (response.status === "success" && response.data) {
+          console.log("✅ Loaded kategori from API:", response.data.length, "categories");
+          console.log("📋 Kategori list:", response.data.map(k => k.nama_kategori));
           setKategoriFromAPI(response.data);
-          console.log("✅ Loaded kategori from API:", response.data.length);
         }
       } catch (error) {
         console.error("❌ Error loading kategori:", error);
@@ -250,10 +251,13 @@ export default function BuatSoal() {
 
   // Handle kategori change
   const handleKategoriChange = (value) => {
+    console.log("🔄 Kategori dipilih:", value);
     setKategori(value);
     if (value === "Lainnya") {
+      console.log("✏️ Kategori custom selected - showing input");
       setShowKategoriInput(true);
     } else {
+      console.log("📁 Kategori existing selected:", value);
       setShowKategoriInput(false);
       setKategoriCustom("");
     }
@@ -747,18 +751,22 @@ export default function BuatSoal() {
             <select
               value={kategori}
               onChange={(e) => handleKategoriChange(e.target.value)}
-              className={`border-2 p-3 rounded-lg w-full transition-all hover:border-blue-400 ${
+              className={`border-2 p-3 rounded-lg w-full transition-all hover:border-blue-400 font-medium ${
                 errors.kategori
-                  ? "border-red-500 focus:ring-2 focus:ring-red-200"
-                  : "border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  ? "border-red-500 focus:ring-2 focus:ring-red-200 bg-red-50"
+                  : "border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white"
               }`}
             >
               <option value="">-- Pilih Kategori --</option>
-              {kategoriFromAPI.map((k, idx) => (
-                <option key={idx} value={k.nama_kategori}>
-                  {k.nama_kategori}
-                </option>
-              ))}
+              {kategoriFromAPI && kategoriFromAPI.length > 0 ? (
+                kategoriFromAPI.map((k, idx) => (
+                  <option key={idx} value={k.nama_kategori}>
+                    📚 {k.nama_kategori}
+                  </option>
+                ))
+              ) : (
+                <option disabled>Tidak ada kategori. Buat yang baru!</option>
+              )}
               <option value="Lainnya">➕ Buat Kategori Baru</option>
             </select>
             {errors.kategori && (

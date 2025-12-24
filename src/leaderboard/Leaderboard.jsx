@@ -12,6 +12,9 @@ export default function Leaderboard() {
   const [resetting, setResetting] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   
+  // State untuk menyimpan data user yang login
+  const [currentUser, setCurrentUser] = useState(null);
+  
   // Filter states
   const [kategoriList, setKategoriList] = useState([]);
   const [materiList, setMateriList] = useState([]);
@@ -19,23 +22,39 @@ export default function Leaderboard() {
   const [selectedMateri, setSelectedMateri] = useState('');
   const [showFilters, setShowFilters] = useState(false);
 
+  // Load User Data saat pertama kali render (ambil dari localStorage)
   useEffect(() => {
-    fetchKategoriList();
-    fetchLeaderboardData();
+    const userString = localStorage.getItem("user");
+    if (userString) {
+      try {
+        setCurrentUser(JSON.parse(userString));
+      } catch (e) {
+        console.error("Error parsing user data:", e);
+      }
+    }
   }, []);
 
   useEffect(() => {
-    if (selectedKategori) {
+    fetchKategoriList();
+    if (currentUser) {
+      fetchLeaderboardData();
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (selectedKategori && currentUser) {
       fetchMateriList(selectedKategori);
     } else {
       setMateriList([]);
       setSelectedMateri('');
     }
-  }, [selectedKategori]);
+  }, [selectedKategori, currentUser]);
 
   useEffect(() => {
-    fetchLeaderboardData();
-  }, [selectedKategori, selectedMateri]);
+    if (currentUser) {
+      fetchLeaderboardData();
+    }
+  }, [selectedKategori, selectedMateri, currentUser]);
 
   const fetchKategoriList = async () => {
     try {
@@ -64,9 +83,15 @@ export default function Leaderboard() {
       setLoading(true);
       setError(null);
       
+      // PENTING: Setiap request leaderboard harus include filter created_by dari user yang login
       const filters = {};
+      if (currentUser) {
+        filters.created_by = currentUser.id; // Filter hanya hasil dari soal kreator yang login
+      }
       if (selectedKategori) filters.kategori_id = selectedKategori;
       if (selectedMateri) filters.materi_id = selectedMateri;
+      
+      console.log('📊 Fetching leaderboard with filters:', filters);
       
       const response = await apiService.getLeaderboard(filters);
       

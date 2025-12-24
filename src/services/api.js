@@ -100,10 +100,17 @@ export const apiService = {
   },
 
   // Materi API calls
-  async getMateri(kategoriId = null) {
-    const url = kategoriId 
-      ? `${BASE_URL}/materi?kategori_id=${kategoriId}`
-      : `${BASE_URL}/materi`;
+  async getMateri(kategoriId = null, createdBy = null) {
+    let url = `${BASE_URL}/materi`;
+    const params = new URLSearchParams();
+    
+    if (kategoriId) params.append('kategori_id', kategoriId);
+    if (createdBy) params.append('created_by', createdBy);
+    
+    if (params.toString()) {
+      url += '?' + params.toString();
+    }
+    
     const response = await fetch(url);
     return await response.json();
   },
@@ -299,6 +306,7 @@ export const apiService = {
     const params = new URLSearchParams();
     if (filters.kategori_id) params.append('kategori_id', filters.kategori_id);
     if (filters.materi_id) params.append('materi_id', filters.materi_id);
+    if (filters.created_by) params.append('created_by', filters.created_by);
     
     const url = `${BASE_URL}/leaderboard${params.toString() ? '?' + params.toString() : ''}`;
     const response = await fetch(url);
