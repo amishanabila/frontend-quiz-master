@@ -24,23 +24,37 @@ export default function Leaderboard() {
 
   // Load User Data saat pertama kali render (ambil dari localStorage)
   useEffect(() => {
-    const userString = localStorage.getItem("user");
+    const userString = localStorage.getItem("userData"); // ✅ FIX: Use correct key
+    console.log("🔍 Leaderboard - localStorage userData:", userString);
     if (userString) {
       try {
-        setCurrentUser(JSON.parse(userString));
+        const user = JSON.parse(userString);
+        console.log("✅ Leaderboard - Parsed user:", user);
+        setCurrentUser(user);
       } catch (e) {
-        console.error("Error parsing user data:", e);
+        console.error("❌ Error parsing user data:", e);
       }
+    } else {
+      console.warn("⚠️ Leaderboard - No userData in localStorage");
     }
   }, []);
 
   useEffect(() => {
     fetchKategoriList();
+  }, []);
+
+  // Trigger fetch when currentUser is set or filters change
+  useEffect(() => {
+    console.log("🎯 Leaderboard useEffect triggered", { currentUser: currentUser?.id, selectedKategori, selectedMateri });
     if (currentUser) {
       fetchLeaderboardData();
+    } else {
+      console.log("⚠️ No currentUser yet, skipping fetch");
+      setLoading(false);
     }
-  }, [currentUser]);
+  }, [currentUser, selectedKategori, selectedMateri]);
 
+  // Fetch materi list when kategori changes
   useEffect(() => {
     if (selectedKategori && currentUser) {
       fetchMateriList(selectedKategori);
@@ -49,12 +63,6 @@ export default function Leaderboard() {
       setSelectedMateri('');
     }
   }, [selectedKategori, currentUser]);
-
-  useEffect(() => {
-    if (currentUser) {
-      fetchLeaderboardData();
-    }
-  }, [selectedKategori, selectedMateri, currentUser]);
 
   const fetchKategoriList = async () => {
     try {
