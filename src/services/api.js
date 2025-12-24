@@ -377,15 +377,17 @@ export const apiService = {
     }
   },
 
-  async getKategoriWithStats() {
-    const response = await fetch(`${BASE_URL}/leaderboard/kategori`);
+  async getKategoriWithStats(createdBy) {
+    const url = `${BASE_URL}/leaderboard/kategori?created_by=${createdBy}`;
+    const response = await fetch(url);
     return await response.json();
   },
 
-  async getMateriByKategori(kategoriId = null) {
-    const url = kategoriId 
-      ? `${BASE_URL}/leaderboard/materi?kategori_id=${kategoriId}`
-      : `${BASE_URL}/leaderboard/materi`;
+  async getMateriByKategori(kategoriId = null, createdBy) {
+    let url = `${BASE_URL}/leaderboard/materi?created_by=${createdBy}`;
+    if (kategoriId) {
+      url += `&kategori_id=${kategoriId}`;
+    }
     const response = await fetch(url);
     return await response.json();
   },

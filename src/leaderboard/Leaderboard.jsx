@@ -40,8 +40,10 @@ export default function Leaderboard() {
   }, []);
 
   useEffect(() => {
-    fetchKategoriList();
-  }, []);
+    if (currentUser) {
+      fetchKategoriList();
+    }
+  }, [currentUser]);
 
   // Trigger fetch when currentUser is set or filters change
   useEffect(() => {
@@ -66,7 +68,11 @@ export default function Leaderboard() {
 
   const fetchKategoriList = async () => {
     try {
-      const response = await apiService.getKategoriWithStats();
+      if (!currentUser) {
+        console.log('⚠️ No currentUser, skipping kategori fetch');
+        return;
+      }
+      const response = await apiService.getKategoriWithStats(currentUser.id);
       if (response.status === 'success') {
         setKategoriList(response.data);
       }
@@ -77,7 +83,11 @@ export default function Leaderboard() {
 
   const fetchMateriList = async (kategoriId) => {
     try {
-      const response = await apiService.getMateriByKategori(kategoriId);
+      if (!currentUser) {
+        console.log('⚠️ No currentUser, skipping materi fetch');
+        return;
+      }
+      const response = await apiService.getMateriByKategori(kategoriId, currentUser.id);
       if (response.status === 'success') {
         setMateriList(response.data);
       }
