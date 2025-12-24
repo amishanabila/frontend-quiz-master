@@ -83,10 +83,12 @@ export default function Leaderboard() {
       setLoading(true);
       setError(null);
       
-      // PENTING: Setiap request leaderboard harus include filter created_by dari user yang login
+      // Build filters - created_by adalah OPTIONAL
+      // Jika ada currentUser, filter by created_by untuk keamanan
       const filters = {};
       if (currentUser) {
-        filters.created_by = currentUser.id; // Filter hanya hasil dari soal kreator yang login
+        filters.created_by = currentUser.id;
+        console.log('📊 Leaderboard: Filter by creator ID', currentUser.id);
       }
       if (selectedKategori) filters.kategori_id = selectedKategori;
       if (selectedMateri) filters.materi_id = selectedMateri;
@@ -96,7 +98,12 @@ export default function Leaderboard() {
       const response = await apiService.getLeaderboard(filters);
       
       if (response.status === 'success') {
+        console.log('✅ Leaderboard data loaded:', response.data.length, 'entries');
         setLeaderboardData(response.data);
+        
+        if (response.data.length === 0) {
+          console.log('⚠️ Leaderboard kosong - user mungkin belum punya peserta atau soal');
+        }
       } else {
         setError(response.message || 'Gagal memuat data leaderboard');
       }

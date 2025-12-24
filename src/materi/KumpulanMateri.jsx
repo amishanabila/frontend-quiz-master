@@ -64,12 +64,13 @@ export default function KumpulanMateri() {
 
         let response;
         if (kategoriAktif === "Semua") {
-          // Muat semua materi yang dibuat oleh kreator yang login
+          // Load SEMUA materi (dengan atau tanpa filter created_by)
+          // Kemudian filter di frontend untuk handle soal lama
           response = await apiService.getMateri(null, currentUser.id);
         } else {
           const kategori = allKategori.find(k => k.nama_kategori === kategoriAktif);
           if (kategori) {
-            // Muat materi dari kategori tertentu yang dibuat oleh kreator yang login
+            // Load materi dari kategori (dengan atau tanpa filter created_by)
             response = await apiService.getMateri(kategori.id, currentUser.id);
           } else {
             response = { status: "success", data: [] };
@@ -77,7 +78,7 @@ export default function KumpulanMateri() {
         }
 
         if (response.status === "success" && response.data) {
-          console.log("📊 Raw materi data from API (filtered by creator):", response.data);
+          console.log("📊 Raw materi data from API:", response.data);
           
           const materiFromAPI = await Promise.all(response.data.map(async (m) => {
             let kumpulanSoalId = null;
@@ -104,7 +105,19 @@ export default function KumpulanMateri() {
             };
           }));
           
-          const sortedMateri = materiFromAPI.sort((a, b) => {
+          // Filter untuk hanya tampil soal dari kreator login
+          // Fallback: jika created_by NULL, check apakah owner bisa ditentukan dari context lain
+          const filteredMateri = materiFromAPI.filter(m => {
+            const creatorId = m.user_id;
+            // Tampilkan soal jika:
+            // 1. created_by match dengan currentUser.id
+            // 2. atau created_by NULL/undefined (soal lama - assume milik user yang upload)
+            return !creatorId || String(creatorId) === String(currentUser.id);
+          });
+          
+          console.log("🔍 Filtered materi count:", filteredMateri.length, "from total:", materiFromAPI.length);
+          
+          const sortedMateri = filteredMateri.sort((a, b) => {
             const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
             const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
             return dateB - dateA;

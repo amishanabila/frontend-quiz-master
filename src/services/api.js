@@ -105,12 +105,15 @@ export const apiService = {
     const params = new URLSearchParams();
     
     if (kategoriId) params.append('kategori_id', kategoriId);
+    // OPTIONAL: Jika createdBy disediakan, gunakan untuk filter
+    // Tapi load semua jika tidak ada untuk backward compatibility
     if (createdBy) params.append('created_by', createdBy);
     
     if (params.toString()) {
       url += '?' + params.toString();
     }
     
+    console.log("🔗 API Call: GET", url);
     const response = await fetch(url);
     return await response.json();
   },
