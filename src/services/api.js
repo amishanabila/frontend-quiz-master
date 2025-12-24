@@ -120,7 +120,7 @@ export const apiService = {
 
   // Get kumpulan soal created by current user (for dashboard)
   async getMyKumpulanSoal(kategoriId = null) {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('authToken'); // ✅ FIX: Match authService key
     let url = `${BASE_URL}/soal/my-kumpulan/all`;
     
     if (kategoriId) {
@@ -391,7 +391,7 @@ export const apiService = {
   },
 
   async resetLeaderboard() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('authToken'); // ✅ FIX: Match authService key
     const response = await fetch(`${BASE_URL}/leaderboard/reset`, {
       method: 'DELETE',
       headers: {
