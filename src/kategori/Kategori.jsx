@@ -1,48 +1,12 @@
 // src/kategori/Kategori.jsx
 import React from "react";
-import { apiService } from "../services/api";
 
 export const kategoriList = [
   { nama: "Semua", icon: "🏠" }
 ];
 
-export default function Kategori({ onPilihKategori, kategoriAktif }) {
-  // Fetch kategori from backend API
-  const [allKategori, setAllKategori] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    const loadKategoriFromAPI = async () => {
-      try {
-        const response = await apiService.getKategori();
-        if (response.status === "success" && response.data) {
-          // Transform backend data to component format with default icons
-          const kategoriFromAPI = response.data.map(kat => ({
-            nama: kat.nama_kategori,
-            icon: getIconForKategori(kat.nama_kategori),
-            id: kat.id
-          }));
-          setAllKategori(kategoriFromAPI);
-          console.log("✅ Loaded kategori from API:", kategoriFromAPI);
-        }
-      } catch (error) {
-        console.error("❌ Error loading kategori:", error);
-        setAllKategori([]); // Fallback to empty array if API fails
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    loadKategoriFromAPI();
-    
-    // Listen for custom event to reload when new kategori is created
-    const handleKategoriUpdate = () => loadKategoriFromAPI();
-    window.addEventListener("customKategoriUpdated", handleKategoriUpdate);
-    
-    return () => {
-      window.removeEventListener("customKategoriUpdated", handleKategoriUpdate);
-    };
-  }, []);
+export default function Kategori({ onPilihKategori, kategoriAktif, kategoriList: propKategoriList = [] }) {
+  // Use kategori from props (already filtered by parent) instead of loading all
 
   // Helper function to assign icons based on kategori name
   const getIconForKategori = (nama) => {
@@ -58,16 +22,15 @@ export default function Kategori({ onPilihKategori, kategoriAktif }) {
     return "📚"; // Default icon for custom categories
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center p-4">
-        <div className="text-gray-500">Loading kategori...</div>
-      </div>
-    );
-  }
+  // Transform prop kategori to include icons
+  const kategoriWithIcons = propKategoriList.map(kat => ({
+    nama: kat.nama_kategori,
+    icon: getIconForKategori(kat.nama_kategori),
+    id: kat.id
+  }));
 
-  // Combine "Semua" with API kategori
-  const allKategoriToShow = [...kategoriList, ...allKategori];
+  // Combine "Semua" with filtered kategori from parent
+  const allKategoriToShow = [...kategoriList, ...kategoriWithIcons];
 
   return (
     <div className="flex justify-center flex-wrap gap-4 p-4">

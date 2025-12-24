@@ -230,6 +230,7 @@ export default function KumpulanMateri() {
       <Kategori
         onPilihKategori={setKategoriAktif}
         kategoriAktif={kategoriAktif}
+        kategoriList={allKategori}
       />
 
       <hr className="my-4" />
