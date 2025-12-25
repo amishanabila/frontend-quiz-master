@@ -158,9 +158,6 @@ export default function KumpulanMateri() {
     }
   }, [kategoriAktif, allKategori, currentUser]);
 
-  // LOGIKA UTAMA: Soal terbaru dari list yang sudah di-filter (semua dari kreator login)
-  const soalTerbaru = materiList.slice(0, 3); 
-
   const toggleMenu = (e, index) => {
     e.stopPropagation();
     setOpenMenuIndex(openMenuIndex === index ? null : index);
@@ -202,24 +199,27 @@ export default function KumpulanMateri() {
     try {
       const token = localStorage.getItem('authToken');
       if (!token) {
-        alert("Anda harus login untuk menghapus materi");
+        alert("Anda harus login untuk menghapus soal");
         return;
       }
-      const response = await apiService.deleteMateri(materiToDelete.materi_id, token);
+      console.log("🗑️ Deleting kumpulan soal with ID:", materiToDelete.kumpulan_soal_id);
+      const response = await apiService.deleteKumpulanSoal(materiToDelete.kumpulan_soal_id, token);
       if (response.status === "success") {
+        console.log("✅ Delete successful");
         setShowDeletePopup(false);
         setMateriToDelete(null);
-        // Refresh list
+        // Refresh list by toggling kategori
         setKategoriAktif(prev => {
           const temp = prev + " ";
           setTimeout(() => setKategoriAktif(prev), 10);
           return temp;
         });
       } else {
-        throw new Error(response.message || "Gagal menghapus materi");
+        throw new Error(response.message || "Gagal menghapus soal");
       }
     } catch (error) {
-      alert(error.message || "Terjadi kesalahan saat menghapus materi");
+      console.error("❌ Error deleting soal:", error);
+      alert(error.message || "Terjadi kesalahan saat menghapus soal");
       setShowDeletePopup(false);
       setMateriToDelete(null);
     }
@@ -235,32 +235,39 @@ export default function KumpulanMateri() {
 
       <hr className="my-4" />
 
-      {/* Bagian Soal Terbaru Saya (Hanya muncul jika user punya soal) */}
-      {soalTerbaru.length > 0 && (
-        <div className="px-4 mb-6">
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <span className="text-blue-600">⭐</span>
-            Soal Terbaru Saya
-          </h2>
-          <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
-            {soalTerbaru.map((m, idx) => (
+      {/* Bagian Soal Saya */}
+      <div className="px-4 mb-2">
+        <h2 className="text-xl font-bold mb-4">
+          {kategoriAktif === "Semua" ? "Soal Saya" : `Soal Saya - ${kategoriAktif}`}
+        </h2>
+      </div>
+      
+      {/* Debug: Show current state */}
+      {console.log("🎨 RENDER - materiList length:", materiList.length, "loading:", loading)}
+      
+      {loading ? (
+        <div className="flex justify-center p-8">
+          <div className="text-gray-500">Loading materi...</div>
+        </div>
+      ) : (
+        <div className="grid gap-6 p-4 grid-cols-2 xs:grid-cols-1 lg:grid-cols-3">
+          {materiList.length > 0 ? (
+            materiList.map((m, idx) => {
+            return (
               <div
                 key={idx}
-                className="bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200 rounded-xl shadow-md p-4 flex flex-col justify-between transform transition-transform duration-200 hover:-translate-y-1 hover:shadow-xl relative"
+                className="bg-white rounded-xl shadow-md p-4 flex flex-col justify-between transform transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg relative"
               >
-                <span className="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                  Baru
-                </span>
-                
-                <div className="absolute top-2 right-14">
+                {/* Menu edit/hapus */}
+                <div className="absolute top-2 right-2">
                   <button
-                    onClick={(e) => toggleMenu(e, `terbaru-${idx}`)}
-                    className="p-1 hover:bg-blue-200 rounded-full transition"
+                    onClick={(e) => toggleMenu(e, idx)}
+                    className="p-1 hover:bg-gray-200 rounded-full transition"
                   >
-                    <MoreVertical size={20} className="text-blue-700" />
+                    <MoreVertical size={20} className="text-gray-700" />
                   </button>
                   
-                  {openMenuIndex === `terbaru-${idx}` && (
+                  {openMenuIndex === idx && (
                     <div className="absolute right-0 mt-1 w-40 bg-white rounded-lg shadow-xl border border-gray-200 z-10">
                       <button
                         onClick={(e) => handleLihatSoal(e, m)}
@@ -286,92 +293,9 @@ export default function KumpulanMateri() {
                     </div>
                   )}
                 </div>
-
-                <div>
-                  <h3 className="font-bold text-lg mb-1 pr-24 text-blue-900">{m.materi}</h3>
-                  <p className="text-blue-600 text-sm font-medium">{m.kategori}</p>
-                </div>
-                {m.jumlahSoal && (
-                  <div className="mt-3 pt-3 border-t border-blue-200">
-                    <p className="text-xs text-blue-600 font-semibold">
-                      📝 {m.jumlahSoal} soal
-                    </p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-          <hr className="my-6" />
-        </div>
-      )}
-
-      {/* Bagian Semua Materi */}
-      <div className="px-4 mb-2">
-        <h2 className="text-xl font-bold mb-4">
-          {kategoriAktif === "Semua" ? "Semua Materi" : `Materi ${kategoriAktif}`}
-        </h2>
-      </div>
-      
-      {/* Debug: Show current state */}
-      {console.log("🎨 RENDER - materiList length:", materiList.length, "loading:", loading)}
-      
-      {loading ? (
-        <div className="flex justify-center p-8">
-          <div className="text-gray-500">Loading materi...</div>
-        </div>
-      ) : (
-        <div className="grid gap-6 p-4 grid-cols-2 xs:grid-cols-1 lg:grid-cols-3">
-          {materiList.length > 0 ? (
-            materiList.map((m, idx) => {
-            return (
-              <div
-                key={idx}
-                className="bg-white rounded-xl shadow-md p-4 flex flex-col justify-between transform transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg relative"
-              >
-                {/* Label 'Soal Saya' & menu edit/hapus (semua item di sini adalah milik user) */}
-                <>
-                  <span className="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                    Soal Saya
-                  </span>
-                  
-                  <div className="absolute top-2 right-20">
-                    <button
-                      onClick={(e) => toggleMenu(e, `all-${idx}`)}
-                      className="p-1 hover:bg-gray-200 rounded-full transition"
-                    >
-                      <MoreVertical size={20} className="text-gray-700" />
-                    </button>
-                    
-                    {openMenuIndex === `all-${idx}` && (
-                      <div className="absolute right-0 mt-1 w-40 bg-white rounded-lg shadow-xl border border-gray-200 z-10">
-                        <button
-                          onClick={(e) => handleLihatSoal(e, m)}
-                          className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2 rounded-t-lg"
-                        >
-                          <Eye size={16} className="text-blue-600" />
-                          Lihat Soal
-                        </button>
-                        <button
-                          onClick={(e) => handleEditSoal(e, m)}
-                          className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2"
-                        >
-                          <Edit size={16} className="text-green-600" />
-                          Edit Soal
-                        </button>
-                        <button
-                          onClick={(e) => handleHapusSoal(e, m)}
-                          className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2 rounded-b-lg text-red-600"
-                        >
-                          <Trash2 size={16} />
-                          Hapus Soal
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </>
                 
                 <div>
-                  <h3 className="font-bold text-lg mb-1 pr-20">{m.materi}</h3>
+                  <h3 className="font-bold text-lg mb-1 pr-10">{m.materi}</h3>
                   <p className="text-gray-500 text-sm">{m.kategori}</p>
                 </div>
                 <div className="mt-3 pt-3 border-t border-gray-200">
