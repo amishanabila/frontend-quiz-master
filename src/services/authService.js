@@ -161,12 +161,9 @@ export const authService = {
         throw new Error('Server memberikan response yang tidak valid. Mungkin backend error.');
       }
       
-      // Handle different response statuses
-      if (!response.ok && response.status !== 404 && response.status !== 400) {
-        console.error('❌ Server error response:', data);
-        throw new Error(data.message || data.details || `Server error: ${response.status}`);
-      }
-      
+      // Return data regardless of status code - let the caller handle it
+      // 404 for email not found, 400 for validation error, 200/500 for others
+      console.log('✅ Returning response data:', data);
       return data;
     } catch (error) {
       console.error('❌ Request password reset error:', error);
