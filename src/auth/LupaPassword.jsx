@@ -5,6 +5,7 @@ import ResetPasswordBerhasil from "../popup/ResetPasswordBerhasil"; // path sesu
 
 export default function LupaPassword() {
   const [isSuccess, setIsSuccess] = useState(false);
+  const [resetToken, setResetToken] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -49,6 +50,8 @@ export default function LupaPassword() {
       // Check response status
       if (response.status === 'success') {
         console.log('✅ Reset password request successful');
+        console.log('🔐 Token received:', response.token);
+        setResetToken(response.token);  // Simpan token dari backend
         setIsSuccess(true);
       } else if (response.status === 'error') {
         // Handle error from backend
@@ -144,7 +147,7 @@ export default function LupaPassword() {
         </form>
       </div>
 
-      {isSuccess && <ResetPasswordBerhasil onClose={() => setIsSuccess(false)} />}
+      {isSuccess && <ResetPasswordBerhasil token={resetToken} onClose={() => setIsSuccess(false)} />}
     </div>
   );
 }
