@@ -133,15 +133,15 @@ export default function Profil() {
       </div>
 
       {/* === Header === */}
-      <div className="relative py-6 flex items-center justify-center z-10">
+      <div className="relative py-6 px-4 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-0 z-10">
         <button
           onClick={() => navigate("/halaman-awal-kreator")}
-          className="absolute top-6 left-6 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl hover:bg-white hover:shadow-lg transition-all font-semibold text-gray-700 border-2 border-orange-200"
+          className="sm:absolute top-6 left-6 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl hover:bg-white hover:shadow-lg transition-all font-semibold text-gray-700 border-2 border-orange-200 w-full sm:w-auto"
         >
           ← Kembali
         </button>
 
-        <h1 className="text-3xl md:text-4xl font-bold text-center bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent">
+        <h1 className="text-2xl md:text-4xl font-bold text-center bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent">
           Profil Saya
         </h1>
       </div>
