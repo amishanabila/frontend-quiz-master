@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { authService } from '../services/authService';
 import { Loader2 } from "lucide-react";
 import ResetPasswordBerhasil from "../popup/ResetPasswordBerhasil"; // path sesuai file-mu
@@ -9,7 +8,6 @@ export default function LupaPassword() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,13 +44,26 @@ export default function LupaPassword() {
       clearTimeout(timeoutId);
       
       console.log('📥 Response received:', response);
+      console.log('📥 Response status:', response.status);
       
+      // Check response status
       if (response.status === 'success') {
         console.log('✅ Reset password request successful');
         setIsSuccess(true);
-      } else {
+      } else if (response.status === 'error') {
+        // Handle error from backend
         console.log('❌ Reset password request failed:', response.message);
-        setError(response.message || "Terjadi kesalahan. Coba lagi.");
+        
+        // Check specific error messages
+        if (response.message && response.message.includes('tidak terdaftar')) {
+          setError("Email tidak terdaftar");
+        } else if (response.message && response.message.includes('Email wajib')) {
+          setError("Email wajib diisi");
+        } else {
+          setError(response.message || "Terjadi kesalahan. Silakan coba lagi.");
+        }
+      } else {
+        setError("Terjadi kesalahan. Silakan coba lagi.");
       }
     } catch (err) {
       console.error('❌ Error during password reset request:', err);
@@ -60,7 +71,7 @@ export default function LupaPassword() {
       console.error('❌ Error message:', err.message);
       
       if (err.name === 'AbortError') {
-        setError("⚠️ BACKEND RAILWAY TIDAK RESPONDING (timeout 90 detik). PENYEBAB: (1) EMAIL_PASSWORD belum diset di Railway Variables, (2) Backend crash saat kirim email, (3) Railway belum selesai restart. SOLUSI SEKARANG: Buka Railway Dashboard → klik 'Logs' → cari error → pastikan EMAIL_PASSWORD sudah diset → klik 'Restart' manual.");
+        setError("⚠️ Backend tidak merespons. Pastikan backend Railway sudah berjalan dan EMAIL_PASSWORD sudah dikonfigurasi.");
       } else if (err.message.includes('Failed to fetch')) {
         setError("Tidak dapat terhubung ke server. Pastikan backend Railway sudah deploy dan running.");
       } else if (err.message.includes('NetworkError') || err.message.includes('Network request failed')) {
