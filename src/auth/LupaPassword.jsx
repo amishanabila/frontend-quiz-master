@@ -60,7 +60,7 @@ export default function LupaPassword() {
       console.error('❌ Error message:', err.message);
       
       if (err.name === 'AbortError') {
-        setError("Request timeout. Server membutuhkan waktu terlalu lama. Mungkin backend Railway sedang cold start atau EMAIL belum dikonfigurasi. Silakan coba lagi dalam 1-2 menit.");
+        setError("⚠️ BACKEND RAILWAY TIDAK RESPONDING (timeout 90 detik). PENYEBAB: (1) EMAIL_PASSWORD belum diset di Railway Variables, (2) Backend crash saat kirim email, (3) Railway belum selesai restart. SOLUSI SEKARANG: Buka Railway Dashboard → klik 'Logs' → cari error → pastikan EMAIL_PASSWORD sudah diset → klik 'Restart' manual.");
       } else if (err.message.includes('Failed to fetch')) {
         setError("Tidak dapat terhubung ke server. Pastikan backend Railway sudah deploy dan running.");
       } else if (err.message.includes('NetworkError') || err.message.includes('Network request failed')) {
