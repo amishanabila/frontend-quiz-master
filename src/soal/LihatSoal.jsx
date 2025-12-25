@@ -75,6 +75,7 @@ export default function LihatSoal() {
                 pilihanB: s.pilihan_b || "",
                 pilihanC: s.pilihan_c || "",
                 pilihanD: s.pilihan_d || "",
+                pilihanE: s.pilihan_e || "",
                 jawabanBenar: jawabanBenar,
                 jenis: jenisSoal,
                 gambar: s.gambar || null // Load gambar dari backend
@@ -156,15 +157,15 @@ export default function LihatSoal() {
       <div className="relative z-10 p-4">
         <div className="max-w-4xl mx-auto">
           {/* Header - Style seperti Profil */}
-          <div className="py-6 flex items-center justify-center mb-6">
+          <div className="py-6 px-4 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-0 mb-6">
             <button
               onClick={() => navigate("/halaman-awal-kreator")}
-              className="absolute top-6 left-6 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl hover:bg-white hover:shadow-lg transition-all font-semibold text-gray-700 border-2 border-orange-200"
+              className="sm:absolute top-6 left-6 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl hover:bg-white hover:shadow-lg transition-all font-semibold text-gray-700 border-2 border-orange-200 w-full sm:w-auto"
             >
               ← Kembali
             </button>
 
-            <h1 className="text-3xl md:text-4xl font-bold text-center bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl md:text-4xl font-bold text-center bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent">
               👁️ Lihat Soal
             </h1>
           </div>
@@ -246,7 +247,7 @@ export default function LihatSoal() {
                     <>
                       {/* Pilihan Jawaban */}
                       <div className="space-y-2">
-                        {["A", "B", "C", "D"].map((option) => {
+                        {["A", "B", "C", "D", "E"].map((option) => {
                           const pilihan = soal[`pilihan${option}`] || soal.opsi?.[option.charCodeAt(0) - 65];
                           if (!pilihan) return null;
                           

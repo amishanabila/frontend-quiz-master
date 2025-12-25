@@ -114,7 +114,7 @@ export default function Soal() {
               if (soalFromAPI && soalFromAPI.length > 0) {
                 const transformedSoal = soalFromAPI.map((s, idx) => {
                   // Determine jenis soal: if no pilihan, it's isian
-                  const hasOptions = s.pilihan_a || s.pilihan_b || s.pilihan_c || s.pilihan_d;
+                  const hasOptions = s.pilihan_a || s.pilihan_b || s.pilihan_c || s.pilihan_d || s.pilihan_e;
                   const jenisSoal = hasOptions ? "pilihan_ganda" : "isian";
                   
                   // Parse variasi_jawaban untuk isian singkat
@@ -136,7 +136,7 @@ export default function Soal() {
                     id: s.soal_id || idx,
                     soal: s.pertanyaan,
                     pertanyaan: s.pertanyaan,
-                    opsi: [s.pilihan_a, s.pilihan_b, s.pilihan_c, s.pilihan_d].filter(Boolean),
+                    opsi: [s.pilihan_a, s.pilihan_b, s.pilihan_c, s.pilihan_d, s.pilihan_e].filter(Boolean),
                     jawaban: jawaban, // Gunakan variasi_jawaban jika ada
                     jenis: jenisSoal,
                     gambar: s.gambar || null // Ambil gambar dari backend
@@ -231,14 +231,14 @@ export default function Soal() {
               // Transform backend format to frontend format and shuffle
               const transformedSoal = soalFromAPI.map((s, idx) => {
                 // Determine jenis soal: if no pilihan, it's isian
-                const hasOptions = s.pilihan_a || s.pilihan_b || s.pilihan_c || s.pilihan_d;
+                const hasOptions = s.pilihan_a || s.pilihan_b || s.pilihan_c || s.pilihan_d || s.pilihan_e;
                 const jenisSoal = hasOptions ? "pilihan_ganda" : "isian";
                 
                 return {
                   id: s.soal_id || idx,
                   soal: s.pertanyaan,
                   pertanyaan: s.pertanyaan,
-                  opsi: [s.pilihan_a, s.pilihan_b, s.pilihan_c, s.pilihan_d].filter(Boolean),
+                  opsi: [s.pilihan_a, s.pilihan_b, s.pilihan_c, s.pilihan_d, s.pilihan_e].filter(Boolean),
                   jawaban: s.jawaban_benar,
                   jenis: jenisSoal,
                   gambar: null
