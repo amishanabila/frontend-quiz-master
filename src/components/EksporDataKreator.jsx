@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Download, FileText, BarChart3, CheckCircle, XCircle, List } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
@@ -43,7 +43,7 @@ export default function EksporDataKreator() {
               } else {
                 formattedRow[label] = String(value);
               }
-            } catch (e) {
+            } catch {
               // If parsing fails, use as string
               formattedRow[label] = String(value);
             }
@@ -66,7 +66,7 @@ export default function EksporDataKreator() {
               formattedRow[label] = `${day}/${month}/${year} ${hours}:${minutes}`;
               return;
             }
-          } catch (e) {
+          } catch {
             // If date parsing fails, use original value
           }
         }
@@ -99,7 +99,7 @@ export default function EksporDataKreator() {
     
     // Calculate column widths based on header and data
     if (headerLabels) {
-      headerLabels.forEach((header, i) => {
+      headerLabels.forEach((header) => {
         const headerWidth = header.length;
         const dataWidth = Math.max(...formattedData.map(row => {
           const val = String(row[header] || '');
