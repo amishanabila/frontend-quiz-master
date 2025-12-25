@@ -54,15 +54,18 @@ export default function BuatSoal() {
     console.log('✅ User is kreator, access granted');
   }, [navigate]);
 
-  // Load kategori from API (ALL CATEGORIES - public untuk semua kreator)
+  // Load kategori from API (ONLY kreator's own categories)
   React.useEffect(() => {
     const loadKategori = async () => {
       try {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         const response = await apiService.getKategori();
         if (response.status === "success" && response.data) {
-          console.log("✅ Loaded kategori from API:", response.data.length, "categories");
-          console.log("📋 Kategori list:", response.data.map(k => k.nama_kategori));
-          setKategoriFromAPI(response.data);
+          // Filter hanya kategori yang dibuat oleh kreator ini
+          const myKategori = response.data.filter(k => k.created_by === userData.id);
+          console.log("✅ Loaded MY kategori from API:", myKategori.length, "categories");
+          console.log("📋 My Kategori list:", myKategori.map(k => k.nama_kategori));
+          setKategoriFromAPI(myKategori);
         }
       } catch (error) {
         console.error("❌ Error loading kategori:", error);
@@ -215,10 +218,10 @@ export default function BuatSoal() {
                 pertanyaan: s.pertanyaan,
                 gambar: s.gambar || null, // Load gambar dari backend
                 jenis: isPilihanGanda ? "pilihan_ganda" : "isian",
-                opsi: isPilihanGanda ? [s.pilihan_a, s.pilihan_b, s.pilihan_c, s.pilihan_d].filter(Boolean) : [],
+                opsi: isPilihanGanda ? [s.pilihan_a, s.pilihan_b, s.pilihan_c, s.pilihan_d, s.pilihan_e].filter(Boolean) : [],
                 jawaban: jawaban,
-                jawabanHuruf: isPilihanGanda && [s.pilihan_a, s.pilihan_b, s.pilihan_c, s.pilihan_d].indexOf(Array.isArray(jawaban) ? jawaban[0] : jawaban) >= 0
-                  ? String.fromCharCode(65 + [s.pilihan_a, s.pilihan_b, s.pilihan_c, s.pilihan_d].indexOf(Array.isArray(jawaban) ? jawaban[0] : jawaban))
+                jawabanHuruf: isPilihanGanda && [s.pilihan_a, s.pilihan_b, s.pilihan_c, s.pilihan_d, s.pilihan_e].indexOf(Array.isArray(jawaban) ? jawaban[0] : jawaban) >= 0
+                  ? String.fromCharCode(65 + [s.pilihan_a, s.pilihan_b, s.pilihan_c, s.pilihan_d, s.pilihan_e].indexOf(Array.isArray(jawaban) ? jawaban[0] : jawaban))
                   : ""
               };
               
@@ -389,8 +392,13 @@ export default function BuatSoal() {
 
   const tambahOpsi = (soalIndex) => {
     const updated = [...soalList];
-    updated[soalIndex].opsi.push("");
-    setSoalList(updated);
+    // Max 5 opsi (A-E)
+    if (updated[soalIndex].opsi.length < 5) {
+      updated[soalIndex].opsi.push("");
+      setSoalList(updated);
+    } else {
+      alert("⚠️ Maksimal 5 pilihan jawaban (A-E)");
+    }
   };
 
   const handleJenisChange = (index, value) => {
@@ -613,6 +621,7 @@ export default function BuatSoal() {
         pilihan_b: s.jenis === "pilihan_ganda" ? s.opsi[1] : null,
         pilihan_c: s.jenis === "pilihan_ganda" ? s.opsi[2] : null,
         pilihan_d: s.jenis === "pilihan_ganda" ? s.opsi[3] : null,
+        pilihan_e: s.jenis === "pilihan_ganda" ? s.opsi[4] : null, // Tambah pilihan E
         // Kirim array lengkap untuk isian singkat, string untuk pilihan ganda
         jawaban_benar: s.jenis === "isian" 
           ? s.jawaban // Array untuk isian singkat
@@ -720,15 +729,15 @@ export default function BuatSoal() {
 
       <div className="flex-1 flex flex-col relative z-10">
         {/* Header - Same style as Leaderboard */}
-        <div className="py-6 flex items-center justify-center">
+        <div className="py-6 px-4 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-0">
           <button
             onClick={() => navigate(-1)}
-            className="absolute top-6 left-6 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl hover:bg-white hover:shadow-lg transition-all font-semibold text-gray-700 border-2 border-orange-200"
+            className="sm:absolute top-6 left-6 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl hover:bg-white hover:shadow-lg transition-all font-semibold text-gray-700 border-2 border-orange-200 w-full sm:w-auto"
           >
             ← Kembali
           </button>
 
-          <h1 className="text-3xl md:text-4xl font-bold text-center bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent">
+          <h1 className="text-2xl md:text-4xl font-bold text-center bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent">
             {isEditMode ? "✏️ Edit Soal" : "✨ Buat Soal Versi Kamu"}
           </h1>
         </div>
