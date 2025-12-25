@@ -54,24 +54,44 @@ export default function BuatSoal() {
     console.log('✅ User is kreator, access granted');
   }, [navigate]);
 
-  // Load kategori from API (ONLY kreator's own categories)
+  // Load kategori from API (ONLY kreator's own categories that have soal)
   React.useEffect(() => {
     const loadKategori = async () => {
       try {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        const response = await apiService.getKategori();
+        if (!userData.id) {
+          console.log("⚠️ No user data, skipping kategori load");
+          return;
+        }
+        
+        // Load kategori yang punya soal dari kreator ini
+        const response = await apiService.getKategoriWithStats(userData.id);
         if (response.status === "success" && response.data) {
-          // Filter hanya kategori yang dibuat oleh kreator ini
-          const myKategori = response.data.filter(k => k.created_by === userData.id);
-          console.log("✅ Loaded MY kategori from API:", myKategori.length, "categories");
-          console.log("📋 My Kategori list:", myKategori.map(k => k.nama_kategori));
-          setKategoriFromAPI(myKategori);
+          console.log("✅ Loaded kategori with soal:", response.data.length, "categories");
+          console.log("📋 Kategori list:", response.data.map(k => k.nama_kategori));
+          setKategoriFromAPI(response.data.map(k => ({
+            kategori_id: k.kategori_id,
+            nama_kategori: k.nama_kategori,
+            created_by: k.created_by
+          })));
         }
       } catch (error) {
         console.error("❌ Error loading kategori:", error);
+        setKategoriFromAPI([]);
       }
     };
     loadKategori();
+    
+    // Listen for kategori updates (when soal is created/deleted)
+    const handleKategoriUpdate = () => {
+      console.log("🔄 Kategori updated, reloading...");
+      loadKategori();
+    };
+    
+    window.addEventListener("customKategoriUpdated", handleKategoriUpdate);
+    return () => {
+      window.removeEventListener("customKategoriUpdated", handleKategoriUpdate);
+    };
   }, []);
 
   // Load draft dari localStorage (untuk create mode)
@@ -149,7 +169,7 @@ export default function BuatSoal() {
       const stateData = location.state;
       
       if (stateData && stateData.kumpulan_soal_id) {
-        // Edit mode
+        // Edit mode - load existing data
         setIsEditMode(true);
         setKumpulanSoalId(stateData.kumpulan_soal_id);
         
