@@ -75,7 +75,6 @@ export default function LihatSoal() {
                 pilihanB: s.pilihan_b || "",
                 pilihanC: s.pilihan_c || "",
                 pilihanD: s.pilihan_d || "",
-                pilihanE: s.pilihan_e || "",
                 jawabanBenar: jawabanBenar,
                 jenis: jenisSoal,
                 gambar: s.gambar || null // Load gambar dari backend
@@ -247,7 +246,7 @@ export default function LihatSoal() {
                     <>
                       {/* Pilihan Jawaban */}
                       <div className="space-y-2">
-                        {["A", "B", "C", "D", "E"].map((option) => {
+                        {["A", "B", "C", "D"].map((option) => {
                           const pilihan = soal[`pilihan${option}`] || soal.opsi?.[option.charCodeAt(0) - 65];
                           if (!pilihan) return null;
                           

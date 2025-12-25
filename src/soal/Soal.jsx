@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import SoalBelumTersedia from "./SoalBelumTersedia";
 import { apiService } from "../services/api";
@@ -25,12 +25,12 @@ export default function Soal() {
   const soalAktif = soalListRandom[currentIndex];
   
   // Generate unique key untuk localStorage berdasarkan session
-  const getStorageKey = () => {
+  const getStorageKey = useCallback(() => {
     const stateData = location.state;
     const pin = stateData?.pin || 'unknown';
     const nama = stateData?.nama || 'anonymous';
     return `quiz_jawaban_${pin}_${nama}`;
-  };
+  }, [location.state]);
 
   // --- SESSION-BASED TIMER (Server timestamp) ---
   const [sessionId, setSessionId] = useState(null);
@@ -114,7 +114,7 @@ export default function Soal() {
               if (soalFromAPI && soalFromAPI.length > 0) {
                 const transformedSoal = soalFromAPI.map((s, idx) => {
                   // Determine jenis soal: if no pilihan, it's isian
-                  const hasOptions = s.pilihan_a || s.pilihan_b || s.pilihan_c || s.pilihan_d || s.pilihan_e;
+                  const hasOptions = s.pilihan_a || s.pilihan_b || s.pilihan_c || s.pilihan_d;
                   const jenisSoal = hasOptions ? "pilihan_ganda" : "isian";
                   
                   // Parse variasi_jawaban untuk isian singkat
@@ -136,7 +136,7 @@ export default function Soal() {
                     id: s.soal_id || idx,
                     soal: s.pertanyaan,
                     pertanyaan: s.pertanyaan,
-                    opsi: [s.pilihan_a, s.pilihan_b, s.pilihan_c, s.pilihan_d, s.pilihan_e].filter(Boolean),
+                    opsi: [s.pilihan_a, s.pilihan_b, s.pilihan_c, s.pilihan_d].filter(Boolean),
                     jawaban: jawaban, // Gunakan variasi_jawaban jika ada
                     jenis: jenisSoal,
                     gambar: s.gambar || null // Ambil gambar dari backend
@@ -231,14 +231,14 @@ export default function Soal() {
               // Transform backend format to frontend format and shuffle
               const transformedSoal = soalFromAPI.map((s, idx) => {
                 // Determine jenis soal: if no pilihan, it's isian
-                const hasOptions = s.pilihan_a || s.pilihan_b || s.pilihan_c || s.pilihan_d || s.pilihan_e;
+                const hasOptions = s.pilihan_a || s.pilihan_b || s.pilihan_c || s.pilihan_d;
                 const jenisSoal = hasOptions ? "pilihan_ganda" : "isian";
                 
                 return {
                   id: s.soal_id || idx,
                   soal: s.pertanyaan,
                   pertanyaan: s.pertanyaan,
-                  opsi: [s.pilihan_a, s.pilihan_b, s.pilihan_c, s.pilihan_d, s.pilihan_e].filter(Boolean),
+                  opsi: [s.pilihan_a, s.pilihan_b, s.pilihan_c, s.pilihan_d].filter(Boolean),
                   jawaban: s.jawaban_benar,
                   jenis: jenisSoal,
                   gambar: null
@@ -266,7 +266,7 @@ export default function Soal() {
     };
 
     loadSoalFromAPI();
-  }, [location.state, slug]); // Add slug to dependencies
+  }, [location.state, slug, navigate]); // Add slug and navigate to dependencies
 
   // Restore jawaban dari localStorage saat component mount atau refresh
   useEffect(() => {
@@ -288,7 +288,7 @@ export default function Soal() {
         }
       }
     }
-  }, [soalListRandom]);
+  }, [soalListRandom, getStorageKey]);
 
   // Save jawaban ke localStorage setiap kali jawabanUser berubah
   useEffect(() => {
@@ -301,7 +301,7 @@ export default function Soal() {
         console.error('❌ Error saving jawaban to localStorage:', e);
       }
     }
-  }, [jawabanUser]);
+  }, [jawabanUser, getStorageKey]);
 
   // Timer effect - sync dengan server
   useEffect(() => {
@@ -395,7 +395,8 @@ export default function Soal() {
       clearInterval(timer);
       clearInterval(syncTimer);
     };
-  }, [sessionId, loading, soalListRandom.length]); // Removed timeLeft dari dependency
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionId, loading, soalListRandom.length]); // timeLeft intentionally excluded to prevent infinite loop
 
   const radius = 40;
   const stroke = 6;
