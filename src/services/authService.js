@@ -125,38 +125,71 @@ export const authService = {
   },
 
   // Request password reset
-  async requestPasswordReset(email) {
+  async requestPasswordReset(email, signal) {
     try {
       console.log('📧 Sending password reset request for:', email);
       console.log('🔗 Using BASE_URL:', BASE_URL);
+      console.log('🔗 Full URL:', `${BASE_URL}/auth/reset-password-request`);
       
-      const response = await fetch(`${BASE_URL}/auth/reset-password-request`, {
+      const fetchOptions = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email }),
-      });
+      };
       
+      // Add abort signal if provided
+      if (signal) {
+        fetchOptions.signal = signal;
+      }
+      
+      console.log('🚀 Sending fetch request...');
+      const response = await fetch(`${BASE_URL}/auth/reset-password-request`, fetchOptions);
+      
+      console.log('📥 Response received!');
       console.log('📥 Response status:', response.status);
+      console.log('📥 Response ok:', response.ok);
       
-      const data = await response.json();
-      console.log('📦 Response data:', data);
+      // Try to parse JSON response
+      let data;
+      try {
+        data = await response.json();
+        console.log('📦 Response data:', data);
+      } catch (parseError) {
+        console.error('❌ Failed to parse JSON response:', parseError);
+        throw new Error('Server memberikan response yang tidak valid. Mungkin backend error.');
+      }
       
       // Handle different response statuses
       if (!response.ok && response.status !== 404 && response.status !== 400) {
-        throw new Error(data.message || `Server error: ${response.status}`);
+        console.error('❌ Server error response:', data);
+        throw new Error(data.message || data.details || `Server error: ${response.status}`);
       }
       
       return data;
     } catch (error) {
       console.error('❌ Request password reset error:', error);
+      console.error('❌ Error type:', error.name);
+      console.error('❌ Error message:', error.message);
       
-      // Provide more specific error messages
-      if (error.message.includes('Failed to fetch') || error.name === 'TypeError') {
-        throw new Error('Tidak dapat terhubung ke server. Periksa koneksi internet Anda.');
+      // Handle abort error (timeout)
+      if (error.name === 'AbortError') {
+        console.error('❌ Request was aborted (timeout)');
+        throw error; // Re-throw to be handled by caller
       }
       
+      // Provide more specific error messages
+      if (error.message.includes('Failed to fetch')) {
+        console.error('❌ Network fetch failed - backend mungkin tidak responding');
+        throw new Error('Tidak dapat terhubung ke backend. Pastikan Railway backend sudah deploy dan running.');
+      }
+      
+      if (error.name === 'TypeError' && error.message.includes('network')) {
+        throw new Error('Masalah koneksi jaringan. Periksa koneksi internet Anda.');
+      }
+      
+      // Re-throw other errors
       throw error;
     }
   },

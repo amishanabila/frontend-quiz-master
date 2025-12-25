@@ -32,17 +32,16 @@ export default function LupaPassword() {
 
     try {
       console.log('🔄 Requesting password reset for:', email);
+      console.log('⏰ Starting request with 60 second timeout...');
       
-      // Add timeout to prevent infinite loading
+      // Increase timeout to 60 seconds for Railway cold start
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      const timeoutId = setTimeout(() => {
+        console.log('⏰ Timeout reached, aborting request...');
+        controller.abort();
+      }, 60000); // 60 second timeout
 
-      const response = await Promise.race([
-        authService.requestPasswordReset(email),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Request timeout - silakan cek koneksi internet Anda')), 30000)
-        )
-      ]);
+      const response = await authService.requestPasswordReset(email, controller.signal);
 
       clearTimeout(timeoutId);
       
@@ -57,11 +56,15 @@ export default function LupaPassword() {
       }
     } catch (err) {
       console.error('❌ Error during password reset request:', err);
+      console.error('❌ Error name:', err.name);
+      console.error('❌ Error message:', err.message);
       
-      if (err.name === 'AbortError' || err.message.includes('timeout')) {
-        setError("Request timeout. Silakan periksa koneksi internet Anda dan coba lagi.");
-      } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
-        setError("Tidak dapat terhubung ke server. Silakan periksa koneksi internet Anda.");
+      if (err.name === 'AbortError') {
+        setError("Request timeout. Server membutuhkan waktu terlalu lama. Mungkin backend Railway sedang cold start atau EMAIL belum dikonfigurasi. Silakan coba lagi dalam 1-2 menit.");
+      } else if (err.message.includes('Failed to fetch')) {
+        setError("Tidak dapat terhubung ke server. Pastikan backend Railway sudah deploy dan running.");
+      } else if (err.message.includes('NetworkError') || err.message.includes('Network request failed')) {
+        setError("Masalah koneksi jaringan. Silakan periksa koneksi internet Anda.");
       } else {
         setError(err.message || "Terjadi kesalahan. Silakan coba lagi.");
       }
