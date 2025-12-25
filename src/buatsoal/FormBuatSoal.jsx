@@ -215,16 +215,26 @@ export default function FormBuatSoal({
               </div>
             ))}
             </div>
-            <button
-              onClick={() => tambahOpsi(index)}
-              type="button"
-              className="mt-4 px-5 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-xl font-bold shadow-md hover:shadow-lg transition-all transform hover:scale-105 flex items-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-              <span>Tambah Opsi</span>
-            </button>
+            {soal.opsi.length < 5 && (
+              <button
+                onClick={() => tambahOpsi(index)}
+                type="button"
+                className="mt-4 px-5 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-xl font-bold shadow-md hover:shadow-lg transition-all transform hover:scale-105 flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <span>Tambah Opsi</span>
+              </button>
+            )}
+            {soal.opsi.length >= 5 && (
+              <p className="mt-4 text-sm text-gray-600 bg-blue-50 p-3 rounded-lg border border-blue-200 flex items-center gap-2">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+                Maksimal 5 pilihan jawaban (A-E) sudah tercapai
+              </p>
+            )}
           </div>
 
           {/* Jawaban Benar */}
