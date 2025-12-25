@@ -141,7 +141,7 @@ export default function FormBuatSoal({
                 alt="Preview"
                 className="w-40 h-40 object-cover rounded-xl border-4 border-blue-200 shadow-lg group-hover:shadow-xl transition-shadow"
                 onLoad={() => console.log('✅ Gambar berhasil dimuat untuk soal', index + 1)}
-                onError={(e) => {
+                onError={() => {
                   console.error('❌ Gagal memuat gambar untuk soal', index + 1);
                   console.error('Gambar src:', soal.gambar?.substring(0, 50) + '...');
                 }}
@@ -215,7 +215,7 @@ export default function FormBuatSoal({
               </div>
             ))}
             </div>
-            {soal.opsi.length < 5 && (
+            {soal.opsi.length < 4 && (
               <button
                 onClick={() => tambahOpsi(index)}
                 type="button"
@@ -226,14 +226,6 @@ export default function FormBuatSoal({
                 </svg>
                 <span>Tambah Opsi</span>
               </button>
-            )}
-            {soal.opsi.length >= 5 && (
-              <p className="mt-4 text-sm text-gray-600 bg-blue-50 p-3 rounded-lg border border-blue-200 flex items-center gap-2">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                </svg>
-                Maksimal 5 pilihan jawaban (A-E) sudah tercapai
-              </p>
             )}
           </div>
 
