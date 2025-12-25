@@ -654,14 +654,28 @@ export default function BuatSoal() {
 
       if (isEditMode && kumpulanSoalId) {
         // Edit mode: Update existing kumpulan_soal
+        console.log("📝 Updating kumpulan_soal with data:", {
+          kumpulan_soal_id: kumpulanSoalId,
+          kategori_id: kategoriId,
+          materi_id: materiId,
+          judul: materi,
+          soal_list_count: soalListBackend.length,
+          waktu_per_soal: waktuPerSoal,
+          waktu_keseluruhan: waktuKeseluruhan,
+          tipe_waktu: tipeWaktu
+        });
+        
         kumpulanSoalResponse = await apiService.updateKumpulanSoal(kumpulanSoalId, {
           kategori_id: kategoriId,
           materi_id: materiId,
+          judul: materi, // Tambahkan judul materi
           soal_list: soalListBackend,
           waktu_per_soal: waktuPerSoal,
           waktu_keseluruhan: waktuKeseluruhan,
           tipe_waktu: tipeWaktu
         }, token);
+        
+        console.log("📨 Response from updateKumpulanSoal:", kumpulanSoalResponse);
 
         if (kumpulanSoalResponse.status !== "success") {
           throw new Error(kumpulanSoalResponse.message || "Gagal memperbarui kumpulan soal");
@@ -671,14 +685,27 @@ export default function BuatSoal() {
         console.log("✅ Kumpulan Soal Updated:", kumpulanSoalIdResult);
       } else {
         // Create mode: Create new kumpulan_soal
+        console.log("📝 Creating new kumpulan_soal with data:", {
+          kategori_id: kategoriId,
+          materi_id: materiId,
+          judul: materi,
+          soal_list_count: soalListBackend.length,
+          waktu_per_soal: waktuPerSoal,
+          waktu_keseluruhan: waktuKeseluruhan,
+          tipe_waktu: tipeWaktu
+        });
+        
         kumpulanSoalResponse = await apiService.createKumpulanSoal({
           kategori_id: kategoriId,
           materi_id: materiId,
+          judul: materi, // Tambahkan judul materi
           soal_list: soalListBackend,
           waktu_per_soal: waktuPerSoal,
           waktu_keseluruhan: waktuKeseluruhan,
           tipe_waktu: tipeWaktu
         }, token);
+        
+        console.log("📨 Response from createKumpulanSoal:", kumpulanSoalResponse);
 
         if (kumpulanSoalResponse.status !== "success") {
           throw new Error(kumpulanSoalResponse.message || "Gagal membuat kumpulan soal");
