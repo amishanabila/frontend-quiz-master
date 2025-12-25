@@ -213,23 +213,23 @@ export default function Leaderboard() {
       </div>
 
       <div className="flex-1 flex flex-col relative z-10">
-        {/* Header with Back Button - Same style as Profil */}
-        <div className="py-6 flex items-center justify-center">
+        {/* Header with Back Button - Responsive */}
+        <div className="py-6 px-4 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-0">
           <button
             onClick={() => navigate("/halaman-awal-kreator")}
-            className="absolute top-6 left-6 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl hover:bg-white hover:shadow-lg transition-all font-semibold text-gray-700 border-2 border-orange-200"
+            className="sm:absolute top-6 left-6 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl hover:bg-white hover:shadow-lg transition-all font-semibold text-gray-700 border-2 border-orange-200 w-full sm:w-auto order-1 sm:order-none"
           >
             ← Kembali
           </button>
 
-          <h1 className="text-3xl md:text-4xl font-bold text-center bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent">
+          <h1 className="text-2xl md:text-4xl font-bold text-center bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent order-2 sm:order-none">
             🏆 Leaderboard
           </h1>
 
           <button
             onClick={() => setShowResetConfirm(true)}
             disabled={loading || resetting}
-            className="absolute top-6 right-6 px-4 py-2 bg-red-500/90 backdrop-blur-sm rounded-xl hover:bg-red-600 hover:shadow-lg transition-all font-semibold text-white border-2 border-red-300 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="sm:absolute top-6 right-6 px-4 py-2 bg-red-500/90 backdrop-blur-sm rounded-xl hover:bg-red-600 hover:shadow-lg transition-all font-semibold text-white border-2 border-red-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto order-3 sm:order-none"
           >
             <RotateCcw className="w-4 h-4" />
             Reset
