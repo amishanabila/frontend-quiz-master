@@ -22,16 +22,49 @@ export default function LupaPassword() {
       return;
     }
 
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Format email tidak valid");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await authService.requestPasswordReset(email);
+      console.log('🔄 Requesting password reset for:', email);
+      
+      // Add timeout to prevent infinite loading
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
+      const response = await Promise.race([
+        authService.requestPasswordReset(email),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Request timeout - silakan cek koneksi internet Anda')), 30000)
+        )
+      ]);
+
+      clearTimeout(timeoutId);
+      
+      console.log('📥 Response received:', response);
       
       if (response.status === 'success') {
+        console.log('✅ Reset password request successful');
         setIsSuccess(true);
       } else {
+        console.log('❌ Reset password request failed:', response.message);
         setError(response.message || "Terjadi kesalahan. Coba lagi.");
       }
     } catch (err) {
-      setError(err.message || "Terjadi kesalahan. Coba lagi.");
+      console.error('❌ Error during password reset request:', err);
+      
+      if (err.name === 'AbortError' || err.message.includes('timeout')) {
+        setError("Request timeout. Silakan periksa koneksi internet Anda dan coba lagi.");
+      } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+        setError("Tidak dapat terhubung ke server. Silakan periksa koneksi internet Anda.");
+      } else {
+        setError(err.message || "Terjadi kesalahan. Silakan coba lagi.");
+      }
     } finally {
       setLoading(false);
     }

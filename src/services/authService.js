@@ -127,6 +127,9 @@ export const authService = {
   // Request password reset
   async requestPasswordReset(email) {
     try {
+      console.log('📧 Sending password reset request for:', email);
+      console.log('🔗 Using BASE_URL:', BASE_URL);
+      
       const response = await fetch(`${BASE_URL}/auth/reset-password-request`, {
         method: 'POST',
         headers: {
@@ -134,9 +137,26 @@ export const authService = {
         },
         body: JSON.stringify({ email }),
       });
-      return await response.json();
+      
+      console.log('📥 Response status:', response.status);
+      
+      const data = await response.json();
+      console.log('📦 Response data:', data);
+      
+      // Handle different response statuses
+      if (!response.ok && response.status !== 404 && response.status !== 400) {
+        throw new Error(data.message || `Server error: ${response.status}`);
+      }
+      
+      return data;
     } catch (error) {
-      console.error('Request password reset error:', error);
+      console.error('❌ Request password reset error:', error);
+      
+      // Provide more specific error messages
+      if (error.message.includes('Failed to fetch') || error.name === 'TypeError') {
+        throw new Error('Tidak dapat terhubung ke server. Periksa koneksi internet Anda.');
+      }
+      
       throw error;
     }
   },
