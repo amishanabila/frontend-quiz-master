@@ -1,9 +1,13 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const ResetPasswordBerhasil = ({ onClose }) => {
-  const handleOpenGmail = () => {
-    // Buka Gmail di tab baru
-    window.open("https://mail.google.com", "_blank");
+const ResetPasswordBerhasil = ({ token, onClose }) => {
+  const navigate = useNavigate();
+
+  const handleGoToPasswordBaru = () => {
+    // Navigate ke halaman password baru dengan token
+    navigate(`/password-baru?token=${token}`);
+    onClose();
   };
 
   return (
@@ -27,22 +31,22 @@ const ResetPasswordBerhasil = ({ onClose }) => {
             </div>
           </div>
           <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent mb-3">
-            Email Berhasil Dikirim!
+            Reset Password Berhasil!
           </h2>
           <p className="text-gray-700 text-sm mb-6 leading-relaxed px-2">
-            Link reset password telah dikirim ke email Anda. Silakan cek email dan klik link untuk membuat password baru.
+            Silakan klik tombol di bawah untuk membuat password baru Anda.
           </p>
           
           <div className="flex flex-col gap-3">
             <button
-              onClick={handleOpenGmail}
-              className="font-bold px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 w-full shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+              onClick={handleGoToPasswordBaru}
+              className="font-bold px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl hover:from-orange-600 hover:to-red-600 transition-all duration-200 w-full shadow-lg hover:scale-[1.02] active:scale-[0.98]"
             >
-              📧 Buka Gmail
+              🔐 Ke Halaman Password Baru
             </button>
             <button
               onClick={onClose}
-              className="font-bold px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-200 w-full shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+              className="font-bold px-6 py-3 bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-xl hover:from-gray-500 hover:to-gray-600 transition-all duration-200 w-full shadow-lg hover:scale-[1.02] active:scale-[0.98]"
             >
               Tutup
             </button>
