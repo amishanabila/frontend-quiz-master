@@ -103,15 +103,13 @@ export default function HasilAkhir() {
     );
   }
 
-  const { soalList, jawabanUser, materi, kategori, skor: skorFromData, benar: benarFromData, total: totalFromData } = hasil;
+  const { soalList, jawabanUser, materi, kategori } = hasil;
 
   console.log('📊 ========== CALCULATING HASIL AKHIR ==========');
   console.log('📊 Materi:', materi);
   console.log('📊 Kategori:', kategori);
   console.log('📊 Soal count:', soalList?.length);
   console.log('📊 Jawaban count:', Object.keys(jawabanUser || {}).length);
-  console.log('📊 Pre-calculated skor:', skorFromData);
-  console.log('📊 Pre-calculated benar:', benarFromData);
 
   // Hitung skor → PG dan isian/essay jika jawaban cocok kunci
   const benar = soalList.filter((soal) => {
@@ -186,7 +184,7 @@ export default function HasilAkhir() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-300 via-yellow-200 to-orange-200 py-8 px-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-300 via-yellow-200 to-orange-200 py-4 sm:py-8 px-2 sm:px-4 relative overflow-hidden">
       {/* Animated Background Circles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-64 h-64 bg-orange-300 rounded-full opacity-20 blur-3xl animate-pulse"></div>
@@ -196,51 +194,51 @@ export default function HasilAkhir() {
 
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Header Card dengan Score */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 mb-6 border-t-8 border-orange-500">
-          <div className="text-center mb-6">
-            <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-yellow-600 mb-2">
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8 mb-4 sm:mb-6 border-t-4 sm:border-t-8 border-orange-500">
+          <div className="text-center mb-4 sm:mb-6">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-yellow-600 mb-2">
               Hasil Quiz
             </h1>
-            <div className="flex items-center justify-center gap-2 text-gray-600 font-semibold">
-              <span className="px-3 py-1 bg-orange-100 rounded-full text-orange-700">{kategori}</span>
-              <span>•</span>
-              <span>{materi}</span>
+            <div className="flex items-center justify-center gap-2 text-gray-600 font-semibold text-xs sm:text-sm md:text-base flex-wrap">
+              <span className="px-2 sm:px-3 py-1 bg-orange-100 rounded-full text-orange-700">{kategori}</span>
+              <span className="hidden xs:inline">•</span>
+              <span className="text-center">{materi}</span>
             </div>
           </div>
 
           {/* Score Circle */}
-          <div className="flex flex-col items-center mb-6">
-            <div className={`w-48 h-48 rounded-full bg-gradient-to-br ${gradeColor} flex flex-col items-center justify-center shadow-2xl transform transition-all duration-300 hover:scale-110`}>
-              <div className="text-7xl mb-2">{gradeEmoji}</div>
-              <div className="text-6xl font-black text-white">{grade}</div>
+          <div className="flex flex-col items-center mb-4 sm:mb-6">
+            <div className={`w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 rounded-full bg-gradient-to-br ${gradeColor} flex flex-col items-center justify-center shadow-2xl transform transition-all duration-300 hover:scale-110`}>
+              <div className="text-4xl sm:text-5xl md:text-7xl mb-1 sm:mb-2">{gradeEmoji}</div>
+              <div className="text-4xl sm:text-5xl md:text-6xl font-black text-white">{grade}</div>
             </div>
-            <p className="text-3xl font-bold text-gray-800 mt-4">{message}</p>
+            <p className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mt-3 sm:mt-4 text-center px-4">{message}</p>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 mt-6">
-            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center border-2 border-green-200">
-              <div className="text-3xl font-black text-green-600">{benar}</div>
-              <div className="text-sm font-semibold text-green-700">Benar</div>
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-4 sm:mt-6">
+            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg sm:rounded-xl p-2 sm:p-4 text-center border-2 border-green-200">
+              <div className="text-xl sm:text-2xl md:text-3xl font-black text-green-600">{benar}</div>
+              <div className="text-xs sm:text-sm font-semibold text-green-700">Benar</div>
             </div>
-            <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4 text-center border-2 border-red-200">
-              <div className="text-3xl font-black text-red-600">{total - benar}</div>
-              <div className="text-sm font-semibold text-red-700">Salah</div>
+            <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg sm:rounded-xl p-2 sm:p-4 text-center border-2 border-red-200">
+              <div className="text-xl sm:text-2xl md:text-3xl font-black text-red-600">{total - benar}</div>
+              <div className="text-xs sm:text-sm font-semibold text-red-700">Salah</div>
             </div>
-            <div className="bg-gradient-to-br from-orange-50 to-yellow-100 rounded-xl p-4 text-center border-2 border-orange-200">
-              <div className="text-3xl font-black text-orange-600">{persentase}%</div>
-              <div className="text-sm font-semibold text-orange-700">Skor</div>
+            <div className="bg-gradient-to-br from-orange-50 to-yellow-100 rounded-lg sm:rounded-xl p-2 sm:p-4 text-center border-2 border-orange-200">
+              <div className="text-xl sm:text-2xl md:text-3xl font-black text-orange-600">{persentase}%</div>
+              <div className="text-xs sm:text-sm font-semibold text-orange-700">Skor</div>
             </div>
           </div>
         </div>
 
         {/* Review Section */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl p-6 mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <span className="text-3xl">📝</span>
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6 mb-4 sm:mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <span className="text-2xl sm:text-3xl">📝</span>
             <span>Review Jawaban</span>
           </h2>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {soalList.map((soal, index) => {
               // Format jawaban benar untuk ditampilkan
               let jawabanBenar;
@@ -288,30 +286,30 @@ export default function HasilAkhir() {
               return (
                 <div
                   key={soal.id}
-                  className={`border-2 rounded-xl p-5 shadow-md transition-all duration-200 ${
+                  className={`border-2 rounded-lg sm:rounded-xl p-3 sm:p-5 shadow-md transition-all duration-200 ${
                     isCorrect 
                       ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-300" 
                       : "bg-gradient-to-r from-red-50 to-pink-50 border-red-300"
                   }`}
                 >
                   {/* Question Header */}
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg shadow-md ${
+                  <div className="flex items-start gap-2 sm:gap-3 mb-3">
+                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center font-bold text-base sm:text-lg shadow-md flex-shrink-0 ${
                       isCorrect 
                         ? "bg-gradient-to-br from-green-500 to-emerald-600 text-white" 
                         : "bg-gradient-to-br from-red-500 to-pink-600 text-white"
                     }`}>
                       {index + 1}
                     </div>
-                    <div className="flex-1">
-                      <p className="font-bold text-gray-800 text-lg leading-relaxed">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-gray-800 text-sm sm:text-base md:text-lg leading-relaxed">
                         {soal.soal}
                       </p>
                       {soal.gambar && (
                         <img
                           src={soal.gambar}
                           alt="Soal"
-                          className="mt-3 w-48 h-48 object-cover rounded-lg border-2 border-gray-300 shadow-md"
+                          className="mt-3 w-full max-w-xs sm:w-48 sm:h-48 object-cover rounded-lg border-2 border-gray-300 shadow-md"
                           onLoad={() => console.log('✅ Gambar hasil akhir berhasil dimuat')}
                           onError={(e) => {
                             console.error('❌ Gagal memuat gambar hasil akhir');
@@ -320,27 +318,28 @@ export default function HasilAkhir() {
                         />
                       )}
                     </div>
-                    <div className={`px-4 py-2 rounded-full font-bold text-sm shadow-md ${
+                    <div className={`px-2 sm:px-4 py-1 sm:py-2 rounded-full font-bold text-xs sm:text-sm shadow-md flex-shrink-0 ${
                       isCorrect 
                         ? "bg-green-500 text-white" 
                         : "bg-red-500 text-white"
                     }`}>
-                      {isCorrect ? "✅ Benar" : "❌ Salah"}
+                      <span className="hidden xs:inline">{isCorrect ? "✅ Benar" : "❌ Salah"}</span>
+                      <span className="xs:hidden">{isCorrect ? "✅" : "❌"}</span>
                     </div>
                   </div>
 
                   {/* Answers */}
-                  <div className="space-y-3 ml-13">
-                    <div className={`p-4 rounded-lg border-2 ${
+                  <div className="space-y-2 sm:space-y-3 ml-0 sm:ml-13">
+                    <div className={`p-3 sm:p-4 rounded-lg border-2 ${
                       isCorrect 
                         ? "bg-white border-green-300" 
                         : "bg-white border-red-300"
                     }`}>
-                      <p className="text-sm font-semibold text-gray-600 mb-1 flex items-center gap-2">
+                      <p className="text-xs sm:text-sm font-semibold text-gray-600 mb-1 flex items-center gap-2">
                         <span className={`w-2 h-2 rounded-full ${isCorrect ? "bg-green-500" : "bg-red-500"}`}></span>
                         Jawaban Kamu:
                       </p>
-                      <p className={`font-bold text-lg ${
+                      <p className={`font-bold text-sm sm:text-base md:text-lg ${
                         isCorrect ? "text-green-700" : "text-red-700"
                       }`}>
                         {jawabanKamu}
@@ -349,12 +348,12 @@ export default function HasilAkhir() {
 
                     {/* Tampilkan jawaban benar HANYA jika user salah DAN jawaban benar tersedia */}
                     {!isCorrect && jawabanBenar && jawabanBenar !== "(Jawaban tidak tersedia)" && (
-                      <div className="p-4 rounded-lg bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300">
-                        <p className="text-sm font-semibold text-gray-600 mb-1 flex items-center gap-2">
+                      <div className="p-3 sm:p-4 rounded-lg bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300">
+                        <p className="text-xs sm:text-sm font-semibold text-gray-600 mb-1 flex items-center gap-2">
                           <span className="w-2 h-2 rounded-full bg-green-500"></span>
                           Jawaban Benar:
                         </p>
-                        <p className="font-bold text-lg text-green-700">
+                        <p className="font-bold text-sm sm:text-base md:text-lg text-green-700">
                           {jawabanBenar}
                         </p>
                       </div>
@@ -362,12 +361,12 @@ export default function HasilAkhir() {
                     
                     {/* Peringatan jika jawaban benar tidak tersedia di database */}
                     {!isCorrect && (!jawabanBenar || jawabanBenar === "(Jawaban tidak tersedia)") && (
-                      <div className="p-4 rounded-lg bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-300">
-                        <p className="text-sm font-semibold text-gray-600 mb-1 flex items-center gap-2">
-                          <span className="text-xl">⚠️</span>
+                      <div className="p-3 sm:p-4 rounded-lg bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-300">
+                        <p className="text-xs sm:text-sm font-semibold text-gray-600 mb-1 flex items-center gap-2">
+                          <span className="text-lg sm:text-xl">⚠️</span>
                           <span>Perhatian:</span>
                         </p>
-                        <p className="font-medium text-sm text-orange-700">
+                        <p className="font-medium text-xs sm:text-sm text-orange-700">
                           Jawaban benar tidak tersedia untuk soal ini. Silakan hubungi pembuat quiz.
                         </p>
                       </div>
@@ -380,14 +379,14 @@ export default function HasilAkhir() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-center">
+        <div className="flex justify-center px-4">
           <button
             onClick={() => {
               localStorage.removeItem('hasilQuiz');
               console.log('🧹 Cleaned up localStorage before navigate');
               navigate("/");
             }}
-            className="px-8 py-4 bg-gradient-to-r from-orange-400 to-yellow-500 hover:from-orange-500 hover:to-yellow-600 text-white rounded-2xl font-bold shadow-lg transition-all transform hover:scale-105 text-lg"
+            className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-orange-400 to-yellow-500 hover:from-orange-500 hover:to-yellow-600 text-white rounded-xl sm:rounded-2xl font-bold shadow-lg transition-all transform hover:scale-105 text-base sm:text-lg"
           >
             🏠 Kembali ke Beranda
           </button>
