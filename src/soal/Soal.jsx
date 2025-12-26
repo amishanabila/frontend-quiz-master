@@ -804,67 +804,70 @@ export default function Soal() {
 
       {/* Header Bar */}
       <div className="bg-white/95 backdrop-blur-sm shadow-lg sticky top-0 z-20 border-b-4 border-orange-500">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white rounded-xl font-bold shadow-lg transition-all transform hover:scale-105"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Kembali
-          </button>
-          
-          {/* Judul di Header */}
-          {materi && soalListRandom.length > 0 && (
-            <div className="flex-1 text-center mx-4">
-              <h1 className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-yellow-600">{materi.materi}</h1>
-              <p className="text-sm text-gray-600 font-semibold">{materi.kategori}</p>
-            </div>
-          )}
-          
-          {/* Timer di Header */}
-          {soalListRandom.length > 0 && sessionId && (
-            <div className="flex items-center gap-3">
-              <svg height={radius * 2} width={radius * 2} className={isUrgent ? "animate-pulse" : ""}>
-                {/* Background circle */}
-                <circle
-                  stroke="#e5e7eb"
-                  fill="white"
-                  strokeWidth={stroke}
-                  r={normalizedRadius}
-                  cx={radius}
-                  cy={radius}
-                />
-                {/* Progress circle with dynamic color */}
-                <circle
-                  stroke={timerColor}
-                  fill="transparent"
-                  strokeWidth={stroke}
-                  strokeDasharray={`${circumference} ${circumference}`}
-                  style={{
-                    strokeDashoffset,
-                    transition: "stroke-dashoffset 1s linear, stroke 0.5s ease",
-                    filter: isUrgent ? "drop-shadow(0 0 8px rgba(239, 68, 68, 0.6))" : "drop-shadow(0 0 4px rgba(34, 197, 94, 0.4))",
-                    transform: "rotate(-90deg)",
-                    transformOrigin: "50% 50%"
-                  }}
-                  r={normalizedRadius}
-                  cx={radius}
-                  cy={radius}
-                />
-                {/* Timer text */}
-                <text
-                  x="50%"
-                  y="50%"
-                  dominantBaseline="middle"
-                  textAnchor="middle"
-                  className="text-sm font-bold"
-                  style={{ fill: timerColor }}
-                >
-                  {formatTime(timeLeft)}
-                </text>
+        <div className="max-w-5xl mx-auto px-2 sm:px-4 py-2 sm:py-4">
+          {/* Mobile Layout: Back button and Timer on same row */}
+          <div className="flex items-center justify-between mb-2 sm:mb-0">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white rounded-lg sm:rounded-xl font-bold text-xs sm:text-base shadow-lg transition-all transform hover:scale-105"
+            >
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
+              <span className="hidden xs:inline">Kembali</span>
+            </button>
+            
+            {/* Timer di Header - Always visible on mobile */}
+            {soalListRandom.length > 0 && sessionId && (
+              <div className="flex items-center gap-2">
+                <svg height={radius * 2} width={radius * 2} className={isUrgent ? "animate-pulse" : ""}>
+                  {/* Background circle */}
+                  <circle
+                    stroke="#e5e7eb"
+                    fill="white"
+                    strokeWidth={stroke}
+                    r={normalizedRadius}
+                    cx={radius}
+                    cy={radius}
+                  />
+                  {/* Progress circle with dynamic color */}
+                  <circle
+                    stroke={timerColor}
+                    fill="transparent"
+                    strokeWidth={stroke}
+                    strokeDasharray={`${circumference} ${circumference}`}
+                    style={{
+                      strokeDashoffset,
+                      transition: "stroke-dashoffset 1s linear, stroke 0.5s ease",
+                      filter: isUrgent ? "drop-shadow(0 0 8px rgba(239, 68, 68, 0.6))" : "drop-shadow(0 0 4px rgba(34, 197, 94, 0.4))",
+                      transform: "rotate(-90deg)",
+                      transformOrigin: "50% 50%"
+                    }}
+                    r={normalizedRadius}
+                    cx={radius}
+                    cy={radius}
+                  />
+                  {/* Timer text */}
+                  <text
+                    x="50%"
+                    y="50%"
+                    dominantBaseline="middle"
+                    textAnchor="middle"
+                    className="text-xs sm:text-sm font-bold"
+                    style={{ fill: timerColor }}
+                  >
+                    {formatTime(timeLeft)}
+                  </text>
+                </svg>
+              </div>
+            )}
+          </div>
+          
+          {/* Judul di Header - Full width on mobile, centered */}
+          {materi && soalListRandom.length > 0 && (
+            <div className="text-center">
+              <h1 className="text-base sm:text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-yellow-600 leading-tight">{materi.materi}</h1>
+              <p className="text-xs sm:text-sm text-gray-600 font-semibold">{materi.kategori}</p>
             </div>
           )}
         </div>
@@ -872,17 +875,17 @@ export default function Soal() {
 
       {/* Progress Bar */}
       {soalListRandom.length > 0 && (
-        <div className="bg-white/95 backdrop-blur-sm shadow-md py-3 px-4 border-b relative z-10">
+        <div className="bg-white/95 backdrop-blur-sm shadow-md py-2 sm:py-3 px-2 sm:px-4 border-b relative z-10">
           <div className="max-w-5xl mx-auto">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-bold text-gray-700">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-2 mb-2">
+              <span className="text-xs sm:text-sm font-bold text-gray-700">
                 Soal {currentIndex + 1} dari {soalListRandom.length}
-                <span className="ml-2 text-xs text-green-600 font-semibold">
+                <span className="ml-1 sm:ml-2 text-xs text-green-600 font-semibold">
                   ({Object.keys(jawabanUser).length} dijawab)
                 </span>
               </span>
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-semibold text-orange-600">
+              <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm">
+                <span className="font-semibold text-orange-600">
                   {Math.round((currentIndex + 1) / soalListRandom.length * 100)}% Selesai
                 </span>
                 {/* Timer Progress Indicator */}
@@ -899,9 +902,9 @@ export default function Soal() {
                 )}
               </div>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+            <div className="w-full bg-gray-200 rounded-full h-2 sm:h-3 overflow-hidden">
               <div 
-                className="bg-gradient-to-r from-orange-400 via-yellow-400 to-green-400 h-3 rounded-full transition-all duration-500 ease-out"
+                className="bg-gradient-to-r from-orange-400 via-yellow-400 to-green-400 h-2 sm:h-3 rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${((currentIndex + 1) / soalListRandom.length) * 100}%` }}
               >
                 <div className="h-full bg-white opacity-30 animate-pulse"></div>
@@ -912,13 +915,13 @@ export default function Soal() {
       )}
 
       {/* Soal atau pesan */}
-      <div className="flex-grow flex items-center justify-center p-6 relative z-10">
+      <div className="flex-grow flex items-center justify-center p-2 sm:p-4 md:p-6 relative z-10">
         {soalAktif ? (
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border-2 border-orange-200 w-full max-w-4xl transform transition-all duration-300 hover:shadow-3xl">
+          <div className="bg-white/95 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl border-2 border-orange-200 w-full max-w-4xl transform transition-all duration-300 hover:shadow-3xl">
             {/* Question Header */}
-            <div className="mb-6 pb-4 border-b-2 border-gray-100">
-              <div className="flex items-start gap-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg flex-shrink-0 transition-all ${
+            <div className="mb-4 sm:mb-6 pb-3 sm:pb-4 border-b-2 border-gray-100">
+              <div className="flex items-start gap-2 sm:gap-3">
+                <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-lg flex-shrink-0 transition-all ${
                   jawabanUser[soalAktif.id] 
                     ? 'bg-gradient-to-br from-green-500 to-emerald-600' 
                     : 'bg-gradient-to-br from-orange-500 to-yellow-500'
@@ -926,11 +929,11 @@ export default function Soal() {
                   {jawabanUser[soalAktif.id] ? '✓' : currentIndex + 1}
                 </div>
                 <div className="flex-1">
-                  <p className="text-lg font-bold text-gray-800 leading-relaxed">
+                  <p className="text-sm sm:text-base md:text-lg font-bold text-gray-800 leading-relaxed">
                     {soalAktif.soal}
                   </p>
                   {jawabanUser[soalAktif.id] && (
-                    <span className="inline-block mt-2 text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                    <span className="inline-block mt-1 sm:mt-2 text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">
                       ✓ Sudah dijawab
                     </span>
                   )}
@@ -940,11 +943,11 @@ export default function Soal() {
             
             {/* Gambar jika ada */}
             {soalAktif.gambar && (
-              <div className="mb-6 flex justify-center">
+              <div className="mb-4 sm:mb-6 flex justify-center">
                 <img
                   src={soalAktif.gambar}
                   alt="Soal"
-                  className="max-w-md w-full rounded-xl border-4 border-orange-200 shadow-lg"
+                  className="max-w-full sm:max-w-md w-full rounded-lg sm:rounded-xl border-2 sm:border-4 border-orange-200 shadow-lg"
                   onLoad={() => console.log('✅ Gambar soal berhasil dimuat')}
                   onError={(e) => {
                     console.error('❌ Gagal memuat gambar soal');
@@ -956,7 +959,7 @@ export default function Soal() {
             )}
 
             {soalAktif.opsi?.length > 0 ? (
-              <div className="space-y-3 mb-8">
+              <div className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
                 {soalAktif.opsi.map((opsi, index) => {
                   const huruf = String.fromCharCode(65 + index);
                   const isSelected = jawabanUser[soalAktif.id] === opsi;
@@ -964,26 +967,26 @@ export default function Soal() {
                     <div
                       key={index}
                       onClick={() => pilihJawaban(opsi)}
-                      className={`group flex items-center gap-4 border-2 rounded-xl px-5 py-4 cursor-pointer transition-all duration-200 ${
+                      className={`group flex items-center gap-2 sm:gap-4 border-2 rounded-lg sm:rounded-xl px-3 sm:px-5 py-2.5 sm:py-4 cursor-pointer transition-all duration-200 ${
                         isSelected
                           ? "bg-gradient-to-r from-orange-400 to-yellow-400 border-orange-500 shadow-lg transform scale-[1.02]"
                           : "bg-white border-gray-300 hover:border-orange-400 hover:shadow-md hover:scale-[1.01]"
                       }`}
                     >
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-lg shadow-md ${
+                      <div className={`w-7 h-7 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center font-bold text-sm sm:text-lg shadow-md flex-shrink-0 ${
                         isSelected 
                           ? "bg-white text-orange-600" 
                           : "bg-gradient-to-br from-orange-100 to-yellow-100 text-orange-600 group-hover:from-orange-200 group-hover:to-yellow-200"
                       }`}>
                         {huruf}
                       </div>
-                      <span className={`font-medium text-base flex-1 ${
+                      <span className={`font-medium text-xs sm:text-sm md:text-base flex-1 ${
                         isSelected ? "text-white" : "text-gray-800 group-hover:text-orange-600"
                       }`}>
                         {opsi}
                       </span>
                       {isSelected && (
-                        <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
                       )}
@@ -992,15 +995,15 @@ export default function Soal() {
                 })}
               </div>
             ) : (
-              <div className="mb-8">
-                <label className="block font-bold text-gray-700 mb-3 flex items-center gap-2">
-                  <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="mb-6 sm:mb-8">
+                <label className="block font-bold text-gray-700 text-sm sm:text-base mb-2 sm:mb-3 flex items-center gap-2">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                   </svg>
                   <span>Tulis Jawaban Anda</span>
                 </label>
                 <textarea
-                  className="w-full border-2 border-gray-300 rounded-xl p-4 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all font-medium text-gray-700 resize-none"
+                  className="w-full border-2 border-gray-300 rounded-lg sm:rounded-xl p-3 sm:p-4 text-sm sm:text-base focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all font-medium text-gray-700 resize-none"
                   rows="5"
                   placeholder="Ketik jawaban Anda di sini... (Minimal 10 karakter)"
                   value={jawabanUser[soalAktif.id] || ""}
@@ -1020,16 +1023,17 @@ export default function Soal() {
               </div>
             )}
 
-            <div className="flex justify-between items-center gap-4 pt-6 border-t-2 border-gray-100">
+            <div className="flex justify-between items-center gap-2 sm:gap-4 pt-4 sm:pt-6 border-t-2 border-gray-100">
               {currentIndex > 0 ? (
                 <button
                   onClick={handlePrev}
-                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-xl font-bold shadow-lg transition-all transform hover:scale-105"
+                  className="flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-lg sm:rounded-xl font-bold text-xs sm:text-base shadow-lg transition-all transform hover:scale-105"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
-                  <span>Sebelumnya</span>
+                  <span className="hidden xs:inline">Sebelumnya</span>
+                  <span className="xs:hidden">◄</span>
                 </button>
               ) : (
                 <div />
@@ -1037,17 +1041,17 @@ export default function Soal() {
 
               <button
                 onClick={handleNext}
-                className={`flex items-center gap-2 px-8 py-4 rounded-xl font-bold shadow-lg transition-all transform hover:scale-105 ${
+                className={`flex items-center gap-1 sm:gap-2 px-4 sm:px-8 py-2.5 sm:py-4 rounded-lg sm:rounded-xl font-bold text-xs sm:text-base shadow-lg transition-all transform hover:scale-105 ${
                   currentIndex === soalListRandom.length - 1
                     ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
                     : "bg-gradient-to-r from-orange-400 to-yellow-500 hover:from-orange-500 hover:to-yellow-600"
                 } text-white`}
               >
-                <span className="text-lg">
+                <span className="text-sm sm:text-base md:text-lg">
                   {currentIndex === soalListRandom.length - 1 ? "🎉 Selesai" : "Selanjutnya"}
                 </span>
                 {currentIndex < soalListRandom.length - 1 && (
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 )}

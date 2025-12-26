@@ -156,38 +156,42 @@ export default function LihatSoal() {
       <div className="relative z-10 p-4">
         <div className="max-w-4xl mx-auto">
           {/* Header - Style seperti Profil */}
-          <div className="py-6 px-4 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-0 mb-6">
+          <div className="py-4 sm:py-6 px-2 sm:px-4 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-0 mb-4 sm:mb-6">
             <button
               onClick={() => navigate("/halaman-awal-kreator")}
-              className="sm:absolute top-6 left-6 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl hover:bg-white hover:shadow-lg transition-all font-semibold text-gray-700 border-2 border-orange-200 w-full sm:w-auto"
+              className="sm:absolute top-6 left-6 px-3 sm:px-4 py-2 bg-white/80 backdrop-blur-sm rounded-lg sm:rounded-xl hover:bg-white hover:shadow-lg transition-all font-semibold text-sm sm:text-base text-gray-700 border-2 border-orange-200 w-full sm:w-auto"
             >
               ← Kembali
             </button>
 
-            <h1 className="text-2xl md:text-4xl font-bold text-center bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent">
-              👁️ Lihat Soal
+            <h1 className="text-xl sm:text-2xl md:text-4xl font-bold text-center bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent flex items-center justify-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <span>Lihat Soal</span>
             </h1>
           </div>
 
           {/* Info Materi */}
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 mb-6 border-2 border-orange-200">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">{materiName}</h2>
-                <p className="text-gray-600 font-medium">📝 Total: {soalList.length} soal</p>
+          <div className="bg-white/95 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 mb-4 sm:mb-6 border-2 border-orange-200">
+            <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+              <div className="flex-1 w-full">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 mb-2">{materiName}</h2>
+                <p className="text-sm sm:text-base text-gray-600 font-medium">📝 Total: {soalList.length} soal</p>
               </div>
               
               {/* PIN Display */}
               {pinCode && (
-                <div className="bg-gradient-to-br from-orange-500 to-yellow-500 rounded-xl p-4 shadow-lg border-2 border-orange-300 min-w-[200px]">
+                <div className="bg-gradient-to-br from-orange-500 to-yellow-500 rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-lg border-2 border-orange-300 w-full sm:w-auto sm:min-w-[200px]">
                   <div className="flex items-center gap-2 mb-1">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                     </svg>
-                    <p className="text-white text-sm font-semibold">PIN Kuis</p>
+                    <p className="text-white text-xs sm:text-sm font-semibold">PIN Kuis</p>
                   </div>
-                  <div className="bg-white rounded-lg p-3 mt-2">
-                    <p className="text-2xl font-bold text-center text-orange-600 tracking-wider">
+                  <div className="bg-white rounded-lg p-2 sm:p-3 mt-2">
+                    <p className="text-xl sm:text-2xl font-bold text-center text-orange-600 tracking-wider">
                       {pinCode}
                     </p>
                   </div>
@@ -200,22 +204,22 @@ export default function LihatSoal() {
           </div>
 
           {/* Daftar Soal */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {soalList.map((soal, idx) => {
               const jenisSoal = soal.jenis || "pilihan_ganda";
               
               return (
-                <div key={idx} className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 border-2 border-orange-100">
+                <div key={idx} className="bg-white/95 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-orange-100">
                   {/* Pertanyaan */}
                   <div className="mb-4">
-                    <div className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-orange-500 to-yellow-500 text-white rounded-full flex items-center justify-center font-bold shadow-lg">
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <span className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-r from-orange-500 to-yellow-500 text-white rounded-full flex items-center justify-center text-sm sm:text-base font-bold shadow-lg">
                         {idx + 1}
                       </span>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <p className="text-lg font-semibold text-gray-800">{soal.pertanyaan || soal.soal}</p>
-                        <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                        <p className="text-sm sm:text-base md:text-lg font-semibold text-gray-800">{soal.pertanyaan || soal.soal}</p>
+                        <span className={`px-2 py-1 rounded text-xs font-semibold self-start ${
                           jenisSoal === "pilihan_ganda" ? "bg-orange-100 text-orange-700" :
                           jenisSoal === "isian" ? "bg-green-100 text-green-700" :
                           "bg-yellow-100 text-yellow-700"
@@ -228,7 +232,7 @@ export default function LihatSoal() {
                         <img 
                           src={soal.gambar} 
                           alt="Gambar soal" 
-                          className="mt-2 max-w-md w-full rounded-lg border-2 border-orange-200 shadow-md" 
+                          className="mt-2 max-w-full sm:max-w-md w-full rounded-lg border-2 border-orange-200 shadow-md" 
                           onLoad={() => console.log('✅ Gambar lihat soal dimuat untuk soal', idx + 1)}
                           onError={(e) => {
                             console.error('❌ Gagal memuat gambar lihat soal', idx + 1);
@@ -241,7 +245,7 @@ export default function LihatSoal() {
                 </div>
 
                 {/* Konten berdasarkan jenis soal */}
-                <div className="ml-11">
+                <div className="ml-0 sm:ml-9 md:ml-11">
                   {jenisSoal === "pilihan_ganda" && (
                     <>
                       {/* Pilihan Jawaban */}
@@ -254,14 +258,14 @@ export default function LihatSoal() {
                           return (
                             <div
                               key={option}
-                              className={`p-3 rounded-lg border-2 flex items-center gap-3 ${
+                              className={`p-2 sm:p-3 rounded-lg border-2 flex items-center gap-2 sm:gap-3 ${
                                 isCorrect
                                   ? "bg-green-50 border-green-500"
                                   : "bg-gray-50 border-gray-200"
                               }`}
                             >
                               <div
-                                className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm ${
+                                className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm flex-shrink-0 ${
                                   isCorrect
                                     ? "bg-green-500 text-white"
                                     : "bg-gray-200 text-gray-600"
@@ -269,11 +273,11 @@ export default function LihatSoal() {
                               >
                                 {option}
                               </div>
-                              <p className={`flex-1 ${isCorrect ? "font-semibold text-green-800" : "text-gray-700"}`}>
+                              <p className={`flex-1 text-xs sm:text-sm md:text-base ${isCorrect ? "font-semibold text-green-800" : "text-gray-700"}`}>
                                 {pilihan}
                               </p>
                               {isCorrect && (
-                                <CheckCircle2 size={20} className="text-green-600 flex-shrink-0" />
+                                <CheckCircle2 size={18} className="text-green-600 flex-shrink-0 hidden xs:block" />
                               )}
                             </div>
                           );
@@ -281,8 +285,8 @@ export default function LihatSoal() {
                       </div>
 
                       {/* Jawaban Benar Label */}
-                      <div className="mt-4 flex items-center gap-2 text-sm">
-                        <CheckCircle2 size={16} className="text-green-600" />
+                      <div className="mt-3 sm:mt-4 flex items-center gap-2 text-xs sm:text-sm">
+                        <CheckCircle2 size={16} className="text-green-600 flex-shrink-0" />
                         <span className="text-green-700 font-semibold">
                           Jawaban Benar: {soal.jawabanBenar || soal.jawabanHuruf}
                         </span>
@@ -293,11 +297,11 @@ export default function LihatSoal() {
                   {(jenisSoal === "isian" || jenisSoal === "essay") && (
                     <>
                       {/* Jawaban untuk isian/essay */}
-                      <div className="bg-green-50 border-2 border-green-500 rounded-lg p-4">
+                      <div className="bg-green-50 border-2 border-green-500 rounded-lg p-3 sm:p-4">
                         <div className="flex items-start gap-2 mb-2">
-                          <CheckCircle2 size={20} className="text-green-600 flex-shrink-0 mt-1" />
-                          <div className="flex-1">
-                            <p className="text-sm font-semibold text-green-700 mb-2">
+                          <CheckCircle2 size={18} className="text-green-600 flex-shrink-0 mt-1" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs sm:text-sm font-semibold text-green-700 mb-2">
                               {jenisSoal === "isian" && Array.isArray(soal.jawabanBenar) 
                                 ? "Jawaban yang Diterima (salah satu):" 
                                 : "Jawaban yang Benar:"}
@@ -307,16 +311,16 @@ export default function LihatSoal() {
                               <div className="space-y-1">
                                 {soal.jawabanBenar.map((jawab, idx) => (
                                   <div key={idx} className="flex items-center gap-2">
-                                    <span className="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                                    <span className="w-5 h-5 sm:w-6 sm:h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
                                       {idx + 1}
                                     </span>
-                                    <p className="text-gray-800">{jawab}</p>
+                                    <p className="text-xs sm:text-sm md:text-base text-gray-800">{jawab}</p>
                                   </div>
                                 ))}
                               </div>
                             ) : (
                               // Single jawaban untuk essay atau old format
-                              <p className="text-gray-800 whitespace-pre-wrap">
+                              <p className="text-xs sm:text-sm md:text-base text-gray-800 whitespace-pre-wrap">
                                 {soal.jawabanBenar}
                               </p>
                             )}
