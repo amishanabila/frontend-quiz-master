@@ -394,7 +394,19 @@ export const apiService = {
 
   async resetLeaderboard() {
     const token = localStorage.getItem('authToken'); // ✅ FIX: Match authService key
-    const response = await fetch(`${BASE_URL}/leaderboard/reset`, {
+    
+    // Get user data to determine role
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    
+    // If user is kreator, use kreator-specific endpoint
+    // If admin, use admin endpoint
+    const endpoint = userData.role === 'kreator' 
+      ? `${BASE_URL}/leaderboard/reset-my-quizzes`
+      : `${BASE_URL}/leaderboard/reset`;
+    
+    console.log('🗑️ Reset leaderboard endpoint:', endpoint, 'Role:', userData.role);
+    
+    const response = await fetch(endpoint, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
