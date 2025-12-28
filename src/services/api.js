@@ -392,7 +392,7 @@ export const apiService = {
     return await response.json();
   },
 
-  async resetLeaderboard() {
+  async resetLeaderboard(filters = {}) {
     const token = localStorage.getItem('authToken'); // ✅ FIX: Match authService key
     
     // Get user data to determine role
@@ -404,14 +404,22 @@ export const apiService = {
       ? `${BASE_URL}/leaderboard/reset-my-quizzes`
       : `${BASE_URL}/leaderboard/reset`;
     
-    console.log('🗑️ Reset leaderboard endpoint:', endpoint, 'Role:', userData.role);
+    const payload = {
+      created_by: filters.created_by || userData.id || null,
+      kategori_id: filters.kategori_id || null,
+      materi_id: filters.materi_id || null,
+      kumpulan_soal_id: filters.kumpulan_soal_id || null
+    };
+    
+    console.log('🗑️ Reset leaderboard endpoint:', endpoint, 'Role:', userData.role, 'Payload:', payload);
     
     const response = await fetch(endpoint, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       },
+      body: JSON.stringify(payload)
     });
     return await response.json();
   },

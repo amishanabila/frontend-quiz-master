@@ -159,7 +159,13 @@ export default function Leaderboard() {
     try {
       setResetting(true);
       setError(null);
-      const response = await apiService.resetLeaderboard();
+      const resetFilters = {
+        kategori_id: selectedKategori || null,
+        materi_id: selectedMateri || null,
+        created_by: currentUser?.id || null
+      };
+
+      const response = await apiService.resetLeaderboard(resetFilters);
       
       if (response.status === 'success') {
         setLeaderboardData([]);
@@ -530,8 +536,27 @@ export default function Leaderboard() {
                 Reset Leaderboard?
               </h2>
               <p className="text-gray-600 font-medium">
-                Semua data peringkat akan dihapus permanen. Tindakan ini tidak dapat dibatalkan!
+                Leaderboard akan dibersihkan sesuai filter. Nilai asli tetap tersimpan dan masih bisa dilihat admin atau diekspor kreator.
               </p>
+              <div className="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-xl text-sm text-gray-700">
+                <span className="font-semibold">Scope reset:</span>{' '}
+                {selectedKategori || selectedMateri ? (
+                  <>
+                    {selectedKategori && (
+                      <span className="inline-block px-2 py-1 bg-white rounded-lg border border-orange-200 mr-2 mt-1">
+                        Kategori: {kategoriList.find(k => k.kategori_id == selectedKategori)?.nama_kategori || selectedKategori}
+                      </span>
+                    )}
+                    {selectedMateri && (
+                      <span className="inline-block px-2 py-1 bg-white rounded-lg border border-orange-200 mr-2 mt-1">
+                        Materi: {materiList.find(m => m.materi_id == selectedMateri)?.judul || selectedMateri}
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <span className="inline-block px-2 py-1 bg-white rounded-lg border border-orange-200 mt-1">Semua kategori & materi</span>
+                )}
+              </div>
             </div>
 
             {error && (
